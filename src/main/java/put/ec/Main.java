@@ -1,4 +1,4 @@
-package org.example;
+package put.ec;
 
 public class Main {
     public static void main(String[] args) {
