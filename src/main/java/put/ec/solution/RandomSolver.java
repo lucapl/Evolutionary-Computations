@@ -32,4 +32,14 @@ public class RandomSolver extends Solver {
 
         return solution;
     }
+
+    @Override
+    public Solution solve(int startingCityIndex){
+        return solve();
+    }
+
+    @Override
+    public double getCostAtPosition(Solution solution, City city, int index) {
+        return 0;
+    }
 }

@@ -2,7 +2,10 @@ package put.ec;
 
 import put.ec.instance.InstanceLoader;
 import put.ec.problem.TravellingSalesmanProblem;
-import put.ec.solution.RandomSolver;
+import put.ec.solution.GreedyCycleSolver;
+import put.ec.solution.NearestNeighbourAtAnySolver;
+import put.ec.solution.NearestNeighbourSolver;
+import put.ec.solution.Solver;
 
 public class Main {
     public static void main(String[] args) {
@@ -11,7 +14,13 @@ public class Main {
         TravellingSalesmanProblem tspA = il.load("instances/TSPA.csv");
         TravellingSalesmanProblem tspB = il.load("instances/TSPB.csv");
 
-        RandomSolver instanceASolver = new RandomSolver(tspA);
-        System.out.println(instanceASolver.solve().getSolutionCost());
+        int index = 10;
+
+        Solver instanceASolver = new NearestNeighbourSolver(tspA);
+        System.out.println(instanceASolver.solve(index));
+        instanceASolver = new NearestNeighbourAtAnySolver(tspA);
+        System.out.println(instanceASolver.solve(index));
+        instanceASolver = new GreedyCycleSolver(tspA);
+        System.out.println(instanceASolver.solve(index));
     }
 }
