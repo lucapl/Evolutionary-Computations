@@ -4,18 +4,21 @@ public class City {
     private double x;
     private double y;
     private double cost;
+    private int index;
 
-    public City(double x, double y, double cost){
+    public City(double x, double y, double cost, int index){
         this.setX(x);
         this.setY(y);
         this.setCost(cost);
+        this.setIndex(index);
     }
 
-    public City(String[] cityString){
+    public City(String[] cityString, int index){
         this(
                 Double.parseDouble(cityString[0]),
                 Double.parseDouble(cityString[1]),
-                Double.parseDouble(cityString[2])
+                Double.parseDouble(cityString[2]),
+                index
         );
     }
 
@@ -46,5 +49,13 @@ public class City {
 
     public void setCost(double cost) {
         this.cost = cost;
+    }
+
+    public int getIndex() {
+        return index;
+    }
+
+    public void setIndex(int index) {
+        this.index = index;
     }
 }

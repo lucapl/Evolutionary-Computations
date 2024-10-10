@@ -1,9 +1,8 @@
-package put.ec.solution;
+package put.ec.solution.solvers;
 
 import put.ec.problem.City;
 import put.ec.problem.TravellingSalesmanProblem;
-
-import java.util.List;
+import put.ec.solution.Solution;
 
 public abstract class Solver {
     private TravellingSalesmanProblem problem;

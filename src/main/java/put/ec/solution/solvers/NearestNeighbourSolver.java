@@ -1,34 +1,25 @@
-package put.ec.solution;
+package put.ec.solution.solvers;
 
 import put.ec.problem.City;
 import put.ec.problem.TravellingSalesmanProblem;
+import put.ec.solution.Solution;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class NearestNeighbourSolver extends Solver{
+public class NearestNeighbourSolver extends Solver {
     public NearestNeighbourSolver(TravellingSalesmanProblem tsp){
         super(tsp);
     }
 
     @Override
-    public double getCostAtPosition(Solution solution, City newCity,int index) throws IllegalArgumentException{
-        if (index < 0 || index >= solution.size()){
-            throw new IllegalArgumentException("Index out of bounds");
-        }
+    public double getCostAtPosition(Solution solution, City newCity, int index) throws IllegalArgumentException{
+        return getCostAtPosition(solution,newCity);
+    }
 
-        double cost = newCity.getCost();
-
-        if (solution.isEmpty()){
-            return cost;
-        }
-
-        City cityInPlace = solution.getCity(index);
-
-        cost += getProblem().getCostBetween(cityInPlace,newCity);
-
-        return cost;
+    private double getCostAtPosition(Solution solution, City newCity) throws IllegalArgumentException{
+        return newCity.getCost() + getProblem().getCostBetween(solution.getLast(),newCity);
     }
 
     @Override
@@ -51,7 +42,7 @@ public class NearestNeighbourSolver extends Solver{
 
                 City city = getProblem().getCity(j);
 
-                double newCost = getCostAtPosition(solution, city, i);
+                double newCost = getCostAtPosition(solution, city);
 
                 if(newCost<bestCost){
                     bestCost = newCost;

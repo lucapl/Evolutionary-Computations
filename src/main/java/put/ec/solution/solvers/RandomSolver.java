@@ -1,10 +1,10 @@
-package put.ec.solution;
+package put.ec.solution.solvers;
 
 import put.ec.problem.City;
 import put.ec.problem.TravellingSalesmanProblem;
+import put.ec.solution.Solution;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 

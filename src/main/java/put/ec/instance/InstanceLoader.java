@@ -17,10 +17,12 @@ public class InstanceLoader {
 
         sc.useDelimiter(";");
         TravellingSalesmanProblem tsp = new TravellingSalesmanProblem();
+        int i = 0;
         while (sc.hasNextLine()) {
             String[] cityString = sc.nextLine().split(";");
-            City city = new City(cityString);
+            City city = new City(cityString,i);
             tsp.addCity(city);
+            i++;
         }
         sc.close();
 

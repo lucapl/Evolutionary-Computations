@@ -7,6 +7,7 @@ import java.util.List;
 
 public class TravellingSalesmanProblem {
     private List<City> cities;
+    private String name;
 
     public TravellingSalesmanProblem(){
         cities = new ArrayList<>();
