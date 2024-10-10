@@ -12,6 +12,6 @@ public class Main {
         TravellingSalesmanProblem tspB = il.load("instances/TSPB.csv");
 
         RandomSolver instanceASolver = new RandomSolver(tspA);
-        instanceASolver.solve();
+        System.out.println(instanceASolver.solve().getSolutionCost());
     }
 }

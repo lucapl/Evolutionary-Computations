@@ -27,4 +27,8 @@ public class TravellingSalesmanProblem {
     public int getSolutionLength(){
         return (int)Math.ceil((double)cities.size()/2);
     }
+
+    public double getCostBetween(City city1, City city2){
+        return Distance.Euclidean(city1,city2);
+    }
 }
