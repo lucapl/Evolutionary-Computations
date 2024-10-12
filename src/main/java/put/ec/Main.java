@@ -15,16 +15,16 @@ public class Main {
         String[] solvers = {"random","nn","nnAnywhere","greedyCycle"};
 
 
-
         SolutionWriter solutionWriter = new SolutionWriter();
         SolverFactory solverFactory = new SolverFactory();
 
-        for(int solverIndex = 0; solverIndex < solvers.length; solverIndex++) {
-            String solverName = solvers[solverIndex];
 
-            for (int instanceIndex = 0; instanceIndex < instances.length; instanceIndex++) {
-                TravellingSalesmanProblem problemInstance = instances[instanceIndex];
-                String instanceName = instanceNames[instanceIndex];
+        for (int instanceIndex = 0; instanceIndex < instances.length; instanceIndex++) {
+            TravellingSalesmanProblem problemInstance = instances[instanceIndex];
+            String instanceName = instanceNames[instanceIndex];
+
+            for(int solverIndex = 0; solverIndex < solvers.length; solverIndex++) {
+                String solverName = solvers[solverIndex];
                 Solver currentSolver = solverFactory.createSolver(solverName,problemInstance);
 
                 for (int startingCity = 0; startingCity < problemInstance.getNumberOfCities(); startingCity++) {
