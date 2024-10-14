@@ -10,8 +10,7 @@ public class Main {
     public static void main(String[] args) {
         InstanceLoader il = new InstanceLoader();
 
-        TravellingSalesmanProblem[] instances = {il.load("instances/TSPA.csv"),il.load("instances/TSPB.csv")};
-        String[] instanceNames = {"A","B"};
+        TravellingSalesmanProblem[] instances = {il.load("instances/TSPA.csv","A"),il.load("instances/TSPB.csv","B")};
         String[] solvers = {"random","nn","nnAnywhere","greedyCycle"};
 
 
@@ -21,15 +20,15 @@ public class Main {
 
         for (int instanceIndex = 0; instanceIndex < instances.length; instanceIndex++) {
             TravellingSalesmanProblem problemInstance = instances[instanceIndex];
-            String instanceName = instanceNames[instanceIndex];
 
             for(int solverIndex = 0; solverIndex < solvers.length; solverIndex++) {
                 String solverName = solvers[solverIndex];
-                Solver currentSolver = solverFactory.createSolver(solverName,problemInstance);
+                Solver solver = solverFactory.createSolver(solverName,problemInstance);
 
                 for (int startingCity = 0; startingCity < problemInstance.getNumberOfCities(); startingCity++) {
-                    Solution solution = currentSolver.solve(startingCity);
-                    solutionWriter.writeSolution(solution,"./out/", instanceName+"_"+startingCity+"_"+solverName, instanceName,solverName);
+                    Solution solution = solver.solve(startingCity);
+                    solution.setStartingCityIndex(startingCity);
+                    solutionWriter.writeSolution(solution,solver,problemInstance,"./out/");
                 }
             }
         }

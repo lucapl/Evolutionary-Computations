@@ -12,9 +12,10 @@ public class TravellingSalesmanProblem {
     private ArrayList<ArrayList<Double>> distanceMatrix;
     private final int initialSize = 200;
 
-    public TravellingSalesmanProblem(){
+    public TravellingSalesmanProblem(String name){
         cities = new ArrayList<>(initialSize);
         createDistanceMatrix();
+        this.name = name;
     }
 
     private void createDistanceMatrix(){
@@ -57,5 +58,13 @@ public class TravellingSalesmanProblem {
             distanceMatrix.get(city1.getIndex()).set(city2.getIndex(),value);
         }
         return value;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }

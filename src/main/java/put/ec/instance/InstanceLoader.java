@@ -10,13 +10,13 @@ import java.util.Scanner;
 
 public class InstanceLoader {
 
-    public TravellingSalesmanProblem load(String fileName){
+    public TravellingSalesmanProblem load(String fileName, String instanceName){
         Scanner sc = null;
 
         sc = new Scanner(getFileAsIOStream(fileName));
 
         sc.useDelimiter(";");
-        TravellingSalesmanProblem tsp = new TravellingSalesmanProblem();
+        TravellingSalesmanProblem tsp = new TravellingSalesmanProblem(instanceName);
         int i = 0;
         while (sc.hasNextLine()) {
             String[] cityString = sc.nextLine().split(";");

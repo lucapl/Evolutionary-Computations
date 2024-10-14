@@ -5,7 +5,7 @@ import put.ec.problem.TravellingSalesmanProblem;
 import put.ec.solution.Solution;
 
 public abstract class Solver {
-    private TravellingSalesmanProblem problem;
+    private final TravellingSalesmanProblem problem;
     private String name;
 
     public Solver(TravellingSalesmanProblem problem){

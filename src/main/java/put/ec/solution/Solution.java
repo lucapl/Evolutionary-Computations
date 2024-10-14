@@ -11,14 +11,15 @@ public class Solution {
     private TravellingSalesmanProblem problem;
     private double cost = -1;
     private double edgeLength = -1;
+    private int startingCityIndex;
 
     public Solution(TravellingSalesmanProblem tsp){
-        problem = tsp;
+        setProblem(tsp);
         cityOrder = new ArrayList<>();
     }
 
     public double getCostBetween(City city1, City city2){
-        return problem.getCostBetween(city1,city2);
+        return getProblem().getCostBetween(city1,city2);
     }
 
     public double calculateSolutionCost(){
@@ -101,5 +102,21 @@ public class Solution {
     @Override
     public String toString(){
         return "Solution\n\tCost: "+getSolutionCost()+"\n\tEdge Length: "+ getEdgeLength()+"\n\tObjective function: "+getObjectiveFunctionValue();
+    }
+
+    public int getStartingCityIndex() {
+        return startingCityIndex;
+    }
+
+    public void setStartingCityIndex(int startingCityIndex) {
+        this.startingCityIndex = startingCityIndex;
+    }
+
+    public TravellingSalesmanProblem getProblem() {
+        return problem;
+    }
+
+    public void setProblem(TravellingSalesmanProblem problem) {
+        this.problem = problem;
     }
 }

@@ -3,13 +3,19 @@ package put.ec.solution;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import put.ec.problem.City;
+import put.ec.problem.TravellingSalesmanProblem;
+import put.ec.solution.solvers.Solver;
 
 import java.io.FileWriter;
 import java.io.IOException;
 
 public class SolutionWriter {
 
-    public void writeSolution(Solution solution,String outFolder, String fileName, String instanceName,String solverName){
+    public void writeSolution(Solution solution, Solver solver, TravellingSalesmanProblem problemInstance, String outFolder){
+        String solverName = solver.getName();
+        int startingCity = solution.getStartingCityIndex();
+        String instanceName = problemInstance.getName();
+        String fileName = problemInstance.getName()+"_"+startingCity+"_"+solverName;
         JSONObject jsonObject = new JSONObject();
 
         jsonObject.put("solverType",solverName);
@@ -17,6 +23,7 @@ public class SolutionWriter {
         jsonObject.put("cost",solution.getSolutionCost());
         jsonObject.put("edge length",solution.getEdgeLength());
         jsonObject.put("objective function",solution.getObjectiveFunctionValue());
+        jsonObject.put("starting city", solution.getStartingCityIndex());
 
         JSONArray jsonArray = new JSONArray();
         for(City city: solution.getCityOrder()){
