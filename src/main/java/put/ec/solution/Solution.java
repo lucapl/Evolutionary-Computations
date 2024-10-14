@@ -38,6 +38,7 @@ public class Solution {
                 continue;
             }
             cost += getCostBetween(lastCity,city);
+            lastCity = city;
         }
         return cost;
     }

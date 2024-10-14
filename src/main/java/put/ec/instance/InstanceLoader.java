@@ -26,6 +26,7 @@ public class InstanceLoader {
         }
         sc.close();
 
+        tsp.calculateDistanceMatrix();
         return tsp;
     }
 
