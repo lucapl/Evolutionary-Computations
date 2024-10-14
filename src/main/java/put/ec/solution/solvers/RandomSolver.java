@@ -12,6 +12,7 @@ public class RandomSolver extends Solver {
 
     public RandomSolver(TravellingSalesmanProblem tsp){
         super(tsp);
+        setName("random");
     }
 
     @Override

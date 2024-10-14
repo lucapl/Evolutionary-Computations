@@ -6,6 +6,7 @@ import put.ec.solution.Solution;
 
 public abstract class Solver {
     private TravellingSalesmanProblem problem;
+    private String name;
 
     public Solver(TravellingSalesmanProblem problem){
         this.problem = problem;
@@ -17,5 +18,13 @@ public abstract class Solver {
 
     public TravellingSalesmanProblem getProblem(){
         return problem;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }

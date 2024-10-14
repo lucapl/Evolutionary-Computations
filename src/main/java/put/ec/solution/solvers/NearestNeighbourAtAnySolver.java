@@ -12,27 +12,7 @@ public class NearestNeighbourAtAnySolver extends NearestNeighbourSolver {
 
     public NearestNeighbourAtAnySolver(TravellingSalesmanProblem problem){
         super(problem);
-    }
-
-    @Override
-    public double getCostAtPosition(Solution solution, City newCity, int index) throws IllegalArgumentException{
-        if (index < 0 || index > solution.size()){
-            throw new IllegalArgumentException("Index out of bounds");
-        }
-
-        double cost = newCity.getCost();
-
-        if (solution.isEmpty()){
-            return cost;
-        }
-
-        int previousIndex = (index-1);
-        previousIndex = previousIndex>=0?previousIndex:solution.size()-1;
-        City previousCity = solution.getCity(previousIndex);
-
-        cost += getProblem().getCostBetween(previousCity,newCity);
-
-        return cost;
+        setName("nnAnywhere");
     }
 
     @Override
@@ -43,9 +23,8 @@ public class NearestNeighbourAtAnySolver extends NearestNeighbourSolver {
         solution.addCity(getProblem().getCity(startingCityIndex));
         inSolution.set(startingCityIndex,true);
 
-        for(int i = 0; i<getProblem().getSolutionLength(); i++){
+        for(int i = solution.size(); i<getProblem().getSolutionLength(); i++){
             City bestCity = null;
-            int bestCityIndex = -1;
             int bestPlacingIndex = -1;
             double bestCost = Double.POSITIVE_INFINITY;
 
@@ -62,12 +41,11 @@ public class NearestNeighbourAtAnySolver extends NearestNeighbourSolver {
                     if(newCost<bestCost){
                         bestCost = newCost;
                         bestCity = city;
-                        bestCityIndex = currentCityIndex;
                         bestPlacingIndex = candidateIndex;
                     }
                 }
             }
-            inSolution.set(bestCityIndex,true);
+            inSolution.set(bestCity.getIndex(),true);
             solution.addCityAt(bestPlacingIndex,bestCity);
         }
 

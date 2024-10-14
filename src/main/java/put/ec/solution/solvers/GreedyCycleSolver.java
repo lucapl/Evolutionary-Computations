@@ -8,12 +8,17 @@ public class GreedyCycleSolver extends NearestNeighbourAtAnySolver {
 
     public GreedyCycleSolver(TravellingSalesmanProblem problem){
         super(problem);
+        setName("greedyCycle");
     }
 
     @Override
     public double getCostAtPosition(Solution solution, City newCity, int index) {
         if (index < 0 || index > solution.size()){
             throw new IllegalArgumentException("Index out of bounds");
+        }
+
+        if (solution.size()<2){
+            return super.getCostAtPosition(solution,newCity,index);
         }
 
         double cost = newCity.getCost();
@@ -26,8 +31,7 @@ public class GreedyCycleSolver extends NearestNeighbourAtAnySolver {
         previousIndex = previousIndex>=0?previousIndex:solution.size()-1;
         City previousCity = solution.getCity(previousIndex);
 
-        int nextIndex = (index+1)%solution.size();
-        City nextCity = solution.getCity(nextIndex);
+        City nextCity = solution.getCity(index%solution.size());
 
         cost += getProblem().getCostBetween(previousCity,newCity);
         cost += getProblem().getCostBetween(nextCity,newCity);
@@ -35,9 +39,5 @@ public class GreedyCycleSolver extends NearestNeighbourAtAnySolver {
         cost -= getProblem().getCostBetween(previousCity,nextCity);
 
         return cost;
-
-//        if(solution.size()>2){
-//            cost += solution.getCostBetween(newCity,solution.getCity(index));
-//        }
     }
 }

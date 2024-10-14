@@ -11,15 +11,33 @@ import java.util.List;
 public class NearestNeighbourSolver extends Solver {
     public NearestNeighbourSolver(TravellingSalesmanProblem tsp){
         super(tsp);
+        setName("nn");
     }
 
     @Override
     public double getCostAtPosition(Solution solution, City newCity, int index) throws IllegalArgumentException{
-        return getCostAtPosition(solution,newCity);
+        if (index < 0 || index > solution.size()){
+            throw new IllegalArgumentException("Index out of bounds");
+        }
+
+        double cost = newCity.getCost();
+
+        if (solution.isEmpty()){
+            return cost;
+        }
+
+        int previousIndex = (index-1);
+        previousIndex = previousIndex>=0?previousIndex:solution.size()-1;
+        City previousCity = solution.getCity(previousIndex);
+
+        cost += getProblem().getCostBetween(previousCity,newCity);
+
+        return cost;
     }
 
     private double getCostAtPosition(Solution solution, City newCity) throws IllegalArgumentException{
-        return newCity.getCost() + getProblem().getCostBetween(solution.getLast(),newCity);
+        //
+        return getCostAtPosition(solution,newCity,solution.size());
     }
 
     @Override
@@ -30,9 +48,8 @@ public class NearestNeighbourSolver extends Solver {
         solution.addCity(getProblem().getCity(startingCityIndex));
         inSolution.set(startingCityIndex,true);
 
-        for(int i = 0; i<getProblem().getSolutionLength(); i++){
+        for(int i = solution.size(); i<getProblem().getSolutionLength(); i++){
             City bestCity = null;
-            int bestIndex = -1;
             double bestCost = Double.POSITIVE_INFINITY;
 
             for(int j=0; j<getProblem().getNumberOfCities(); j++){
@@ -47,11 +64,10 @@ public class NearestNeighbourSolver extends Solver {
                 if(newCost<bestCost){
                     bestCost = newCost;
                     bestCity = city;
-                    bestIndex = j;
                 }
             }
 
-            inSolution.set(bestIndex,true);
+            inSolution.set(bestCity.getIndex(),  true);
             solution.addCity(bestCity);
         }
 
