@@ -11,7 +11,7 @@ public class Main {
         InstanceLoader il = new InstanceLoader();
 
         TravellingSalesmanProblem[] instances = {il.load("instances/TSPA.csv","A"),il.load("instances/TSPB.csv","B")};
-        String[] solvers = {"random","nn","nnAnywhere","greedyCycle"};
+        String[] solvers = {"regret2","regretHeuristic"};
 
 
         SolutionWriter solutionWriter = new SolutionWriter();
