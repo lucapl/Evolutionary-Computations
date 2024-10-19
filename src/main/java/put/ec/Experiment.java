@@ -6,14 +6,9 @@ import put.ec.solution.Solution;
 import put.ec.solution.SolutionWriter;
 import put.ec.solution.solvers.*;
 
-public class Main {
-    public static void main(String[] args) {
-        InstanceLoader il = new InstanceLoader();
+public class Experiment {
 
-        TravellingSalesmanProblem[] instances = {il.load("instances/TSPA.csv","A"),il.load("instances/TSPB.csv","B")};
-        String[] solvers = {"regret2","regretHeuristic"};
-
-
+    public static void runExperiment(TravellingSalesmanProblem[] instances, String[] solvers){
         SolutionWriter solutionWriter = new SolutionWriter();
         SolverFactory solverFactory = new SolverFactory();
 

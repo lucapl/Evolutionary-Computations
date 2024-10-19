@@ -8,11 +8,14 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class Regret2 extends NearestNeighbourSolver{
+public class WeightedRegretHeuristic extends GreedyCycleSolver{
+    private double costWeight;
+    private double regretWeight;
 
-    public Regret2(TravellingSalesmanProblem tsp){
+    public WeightedRegretHeuristic(TravellingSalesmanProblem tsp, double costWeight, double regretWeight) {
         super(tsp);
-        setName("regret2");
+        setName("weightedRegretHeuristic");
+        setWeights(costWeight,regretWeight);
     }
 
     public Solution solve(int startingCityIndex) {
@@ -24,12 +27,13 @@ public class Regret2 extends NearestNeighbourSolver{
 
         for(int i = solution.size(); i<getProblem().getSolutionLength(); i++){
             City bestCity = null;
-            int bestPlacingIndex = -1;
-            double bestCost = Double.POSITIVE_INFINITY;
-            double secondBestCost = Double.POSITIVE_INFINITY;
-            double bestRegret = -1;
+            int bestRegretPlacingIndex = -1;
+            double objective = Double.NEGATIVE_INFINITY;
 
             for(int currentCityIndex=0; currentCityIndex < getProblem().getNumberOfCities(); currentCityIndex++){
+                double bestCost = Double.POSITIVE_INFINITY;
+                double secondBestCost = Double.POSITIVE_INFINITY;
+                int bestPlacingIndex = -1;
 
                 if(inSolution.get(currentCityIndex)){
                     continue;
@@ -43,22 +47,42 @@ public class Regret2 extends NearestNeighbourSolver{
                     if(newCost<bestCost){
                         secondBestCost = bestCost;
                         bestCost = newCost;
-                        bestCity = city;
                         bestPlacingIndex = candidateIndex;
                     } else if (newCost<secondBestCost) {
                         secondBestCost = newCost;
                     }
                 }
                 double regret = secondBestCost - bestCost;
-                if (regret > bestRegret){
-                    bestRegret = regret;
+                double value = getWeighted(regret,bestCost);
+
+                if (value > objective){
+                    objective = value;
                     bestCity = city;
+                    bestRegretPlacingIndex = bestPlacingIndex;
                 }
             }
             inSolution.set(bestCity.getIndex(),true);
-            solution.addCityAt(bestPlacingIndex,bestCity);
+            solution.addCityAt(bestRegretPlacingIndex,bestCity);
         }
 
         return solution;
+    }
+
+    public double getWeighted(double regret,double cost){
+        return getCostWeight()*(-cost) + getRegretWeight()*(regret);
+    }
+
+    public double getCostWeight() {
+        return costWeight;
+    }
+
+    public void setWeights(double costWeight, double regretWeight) {
+        double sum = costWeight + regretWeight;
+        this.costWeight = costWeight/sum;
+        this.regretWeight = regretWeight/sum;
+    }
+
+    public double getRegretWeight() {
+        return regretWeight;
     }
 }

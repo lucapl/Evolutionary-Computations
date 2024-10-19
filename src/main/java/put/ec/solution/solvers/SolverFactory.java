@@ -13,10 +13,10 @@ public class SolverFactory {
             return new NearestNeighbourAtAnySolver(problem);
         } else if (name.equals("greedyCycle")) {
             return new GreedyCycleSolver(problem);
-        } else if (name.equals("regret2")) {
-            return new Regret2(problem);
         } else if (name.equals("regretHeuristic")) {
             return new RegretHeuristic(problem);
+        } else if (name.equals("weightedRegretHeuristic")) {
+            return new WeightedRegretHeuristic(problem,0.5,0.5);
         }
         System.out.println("Solver name not found");
         return null;
