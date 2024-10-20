@@ -9,7 +9,8 @@ public class Assignment2 extends Experiment{
 
         TravellingSalesmanProblem[] instances = {il.load("instances/TSPA.csv","A"),il.load("instances/TSPB.csv","B")};
         String[] solvers = {"regretHeuristic","weightedRegretHeuristic"};
+        String outFolder = "./out2/";
 
-        runExperiment(instances,solvers);
+        runExperiment(instances,solvers,outFolder);
     }
 }

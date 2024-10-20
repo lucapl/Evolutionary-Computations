@@ -8,7 +8,7 @@ import put.ec.solution.solvers.*;
 
 public class Experiment {
 
-    public static void runExperiment(TravellingSalesmanProblem[] instances, String[] solvers){
+    public static void runExperiment(TravellingSalesmanProblem[] instances, String[] solvers,String outFolder){
         SolutionWriter solutionWriter = new SolutionWriter();
         SolverFactory solverFactory = new SolverFactory();
 
@@ -23,7 +23,7 @@ public class Experiment {
                 for (int startingCity = 0; startingCity < problemInstance.getNumberOfCities(); startingCity++) {
                     Solution solution = solver.solve(startingCity);
                     solution.setStartingCityIndex(startingCity);
-                    solutionWriter.writeSolution(solution,solver,problemInstance,"./out/");
+                    solutionWriter.writeSolution(solution,solver,problemInstance,outFolder);
                 }
             }
         }

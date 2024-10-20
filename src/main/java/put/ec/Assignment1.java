@@ -9,7 +9,8 @@ public class Assignment1 extends Experiment{
 
         TravellingSalesmanProblem[] instances = {il.load("instances/TSPA.csv","A"),il.load("instances/TSPB.csv","B")};
         String[] solvers = {"random","nn","nnAnywhere","greedyCycle"};
+        String outFolder = "./out1/";
 
-        runExperiment(instances,solvers);
+        runExperiment(instances,solvers,outFolder);
     }
 }
