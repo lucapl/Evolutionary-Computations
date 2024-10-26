@@ -1,4 +1,4 @@
-package put.ec.solution.solvers;
+package put.ec.solution.solvers.Heuristics;
 
 import put.ec.problem.City;
 import put.ec.problem.TravellingSalesmanProblem;
@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class NearestNeighbourSolver extends Solver {
+public class NearestNeighbourSolver extends HeuristicSolver{
     public NearestNeighbourSolver(TravellingSalesmanProblem tsp){
         super(tsp);
         setName("nn");
@@ -70,7 +70,7 @@ public class NearestNeighbourSolver extends Solver {
             inSolution.set(bestCity.getIndex(),  true);
             solution.addCity(bestCity);
         }
-
+        
         return solution;
     }
 

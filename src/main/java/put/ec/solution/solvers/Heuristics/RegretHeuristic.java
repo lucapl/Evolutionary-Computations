@@ -1,12 +1,6 @@
-package put.ec.solution.solvers;
+package put.ec.solution.solvers.Heuristics;
 
-import put.ec.problem.City;
 import put.ec.problem.TravellingSalesmanProblem;
-import put.ec.solution.Solution;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 public class RegretHeuristic extends WeightedRegretHeuristic{
 

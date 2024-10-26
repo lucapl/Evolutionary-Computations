@@ -1,4 +1,4 @@
-package put.ec.solution.solvers;
+package put.ec.solution.solvers.Heuristics;
 
 import put.ec.problem.City;
 import put.ec.problem.TravellingSalesmanProblem;
