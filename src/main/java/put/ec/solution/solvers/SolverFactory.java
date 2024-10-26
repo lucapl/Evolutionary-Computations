@@ -1,10 +1,13 @@
 package put.ec.solution.solvers;
 
 import put.ec.problem.TravellingSalesmanProblem;
+import put.ec.solution.solvers.Heuristics.*;
+import put.ec.solution.solvers.LocalSearch.LocalSearch;
+import put.ec.solution.solvers.LocalSearch.LocalSearchType;
 
 public class SolverFactory {
 
-    public Solver createSolver(String name, TravellingSalesmanProblem problem){
+    public HeuristicSolver createHeuristicSolver(String name, TravellingSalesmanProblem problem){
         if(name.equals("random")){
             return new RandomSolver(problem);
         } else if (name.equals("nn")) {
@@ -20,5 +23,14 @@ public class SolverFactory {
         }
         System.out.println("Solver name not found");
         return null;
+    }
+
+    public Solver createSolver(String name, TravellingSalesmanProblem problem){
+        if(name.equals("localSearchSteepest")){
+            return new LocalSearch(problem,"greedyCycle", LocalSearchType.STEEPEST);
+        } else if (name.equals("localSearchGreedy")){
+            return new LocalSearch(problem,"greedyCycle", LocalSearchType.GREEDY);
+        }
+        return createHeuristicSolver(name,problem);
     }
 }
