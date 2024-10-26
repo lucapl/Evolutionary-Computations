@@ -40,7 +40,7 @@ public class LocalSearch extends Solver {
         return 0;
     }
 
-    public List<LocalMove> getMoves(Solution solution, List<Boolean> InSolution){
+    public List<LocalMove> getMoves(Solution solution){
 
     }
 }

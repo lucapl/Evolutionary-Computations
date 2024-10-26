@@ -20,26 +20,23 @@ public class WeightedRegretHeuristic extends GreedyCycleSolver{
 
     public Solution solve(int startingCityIndex) {
         Solution solution = new Solution(getProblem());
-        List<Boolean> inSolution = new ArrayList<>(Collections.nCopies(getProblem().getNumberOfCities(),false));
 
         solution.addCity(getProblem().getCity(startingCityIndex));
-        inSolution.set(startingCityIndex,true);
 
         for(int i = solution.size(); i<getProblem().getSolutionLength(); i++){
             City bestCity = null;
             int bestRegretPlacingIndex = -1;
             double objective = Double.NEGATIVE_INFINITY;
 
-            for(int currentCityIndex=0; currentCityIndex < getProblem().getNumberOfCities(); currentCityIndex++){
+            for(City city: getProblem().getCities()){
                 double bestCost = Double.POSITIVE_INFINITY;
                 double secondBestCost = Double.POSITIVE_INFINITY;
                 int bestPlacingIndex = -1;
 
-                if(inSolution.get(currentCityIndex)){
+                if(solution.isIn(city)){
                     continue;
                 }
 
-                City city = getProblem().getCity(currentCityIndex);
                 for(int candidateIndex = 0; candidateIndex <= solution.size(); candidateIndex++){
 
                     double newCost = getCostAtPosition(solution, city, candidateIndex);
@@ -61,7 +58,7 @@ public class WeightedRegretHeuristic extends GreedyCycleSolver{
                     bestRegretPlacingIndex = bestPlacingIndex;
                 }
             }
-            inSolution.set(bestCity.getIndex(),true);
+
             solution.addCityAt(bestRegretPlacingIndex,bestCity);
         }
 

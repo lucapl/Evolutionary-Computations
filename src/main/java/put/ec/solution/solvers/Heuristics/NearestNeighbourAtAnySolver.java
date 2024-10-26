@@ -18,10 +18,8 @@ public class NearestNeighbourAtAnySolver extends NearestNeighbourSolver {
     @Override
     public Solution solve(int startingCityIndex) {
         Solution solution = new Solution(getProblem());
-        List<Boolean> inSolution = new ArrayList<>(Collections.nCopies(getProblem().getNumberOfCities(),false));
 
         solution.addCity(getProblem().getCity(startingCityIndex));
-        inSolution.set(startingCityIndex,true);
 
         for(int i = solution.size(); i<getProblem().getSolutionLength(); i++){
             City bestCity = null;
@@ -29,12 +27,10 @@ public class NearestNeighbourAtAnySolver extends NearestNeighbourSolver {
             double bestCost = Double.POSITIVE_INFINITY;
 
             for(int candidateIndex = 0; candidateIndex <= solution.size(); candidateIndex++){
-                for(int currentCityIndex=0; currentCityIndex < getProblem().getNumberOfCities(); currentCityIndex++){
-                    if(inSolution.get(currentCityIndex)){
+                for(City city: getProblem().getCities()){
+                    if(solution.isIn(city)){
                         continue;
                     }
-
-                    City city = getProblem().getCity(currentCityIndex);
 
                     double newCost = getCostAtPosition(solution, city, candidateIndex);
 
@@ -45,7 +41,6 @@ public class NearestNeighbourAtAnySolver extends NearestNeighbourSolver {
                     }
                 }
             }
-            inSolution.set(bestCity.getIndex(),true);
             solution.addCityAt(bestPlacingIndex,bestCity);
         }
 

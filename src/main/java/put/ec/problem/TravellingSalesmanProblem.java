@@ -13,7 +13,7 @@ public class TravellingSalesmanProblem {
     private final int initialSize = 200;
 
     public TravellingSalesmanProblem(String name){
-        cities = new ArrayList<>(initialSize);
+        setCities(new ArrayList<>(initialSize));
         createDistanceMatrix();
         this.name = name;
     }
@@ -27,28 +27,28 @@ public class TravellingSalesmanProblem {
 
     public void calculateDistanceMatrix(){
         for(int city1Index = 0; city1Index < getNumberOfCities(); city1Index++){
-            City city1 = cities.get(city1Index);
+            City city1 = getCities().get(city1Index);
             for(int city2Index = city1Index+1; city2Index < getNumberOfCities(); city2Index++){
-                City city2 = cities.get(city2Index);
+                City city2 = getCities().get(city2Index);
                 getCostBetween(city1,city2);
             }
         }
     }
 
     public void addCity(City city){
-        cities.add(city);
+        getCities().add(city);
     }
 
     public City getCity(int index){
-        return cities.get(index);
+        return getCities().get(index);
     }
 
     public int getNumberOfCities(){
-        return cities.size();
+        return getCities().size();
     }
 
     public int getSolutionLength(){
-        return (int)Math.ceil((double)cities.size()/2);
+        return (int)Math.ceil((double) getCities().size()/2);
     }
 
     public double getCostBetween(City city1, City city2){
@@ -66,5 +66,13 @@ public class TravellingSalesmanProblem {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public List<City> getCities() {
+        return cities;
+    }
+
+    public void setCities(List<City> cities) {
+        this.cities = cities;
     }
 }

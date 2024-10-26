@@ -43,21 +43,17 @@ public class NearestNeighbourSolver extends HeuristicSolver{
     @Override
     public Solution solve(int startingCityIndex) {
         Solution solution = new Solution(getProblem());
-        List<Boolean> inSolution = new ArrayList<>(Collections.nCopies(getProblem().getNumberOfCities(),false));
 
         solution.addCity(getProblem().getCity(startingCityIndex));
-        inSolution.set(startingCityIndex,true);
 
         for(int i = solution.size(); i<getProblem().getSolutionLength(); i++){
             City bestCity = null;
             double bestCost = Double.POSITIVE_INFINITY;
 
-            for(int j=0; j<getProblem().getNumberOfCities(); j++){
-                if(inSolution.get(j)){
+            for(City city: getProblem().getCities()){
+                if(solution.isIn(city)){
                     continue;
                 }
-
-                City city = getProblem().getCity(j);
 
                 double newCost = getCostAtPosition(solution, city);
 
@@ -67,10 +63,9 @@ public class NearestNeighbourSolver extends HeuristicSolver{
                 }
             }
 
-            inSolution.set(bestCity.getIndex(),  true);
             solution.addCity(bestCity);
         }
-        
+
         return solution;
     }
 

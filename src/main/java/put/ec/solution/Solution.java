@@ -4,10 +4,12 @@ import put.ec.problem.City;
 import put.ec.problem.TravellingSalesmanProblem;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class Solution {
     private List<City> cityOrder;
+    private List<Boolean> inSolution;
     private TravellingSalesmanProblem problem;
     private double cost = -1;
     private double edgeLength = -1;
@@ -16,6 +18,7 @@ public class Solution {
     public Solution(TravellingSalesmanProblem tsp){
         setProblem(tsp);
         cityOrder = new ArrayList<>();
+        inSolution = new ArrayList<>(Collections.nCopies(getProblem().getNumberOfCities(),false));
     }
 
     public double getCostBetween(City city1, City city2){
@@ -68,10 +71,16 @@ public class Solution {
 
     public void addCityAt(int index, City city){
         this.cityOrder.add(index,city);
+        this.inSolution.set(city.getIndex(),true);
     }
 
     public void addCity(City city){
         this.cityOrder.add(city);
+        this.inSolution.set(city.getIndex(),true);
+    }
+
+    public boolean isIn(City city){
+        return this.inSolution.get(city.getIndex());
     }
 
     public City getCity(int index){
