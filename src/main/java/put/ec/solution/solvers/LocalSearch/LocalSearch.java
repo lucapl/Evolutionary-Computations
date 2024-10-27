@@ -67,15 +67,79 @@ public class LocalSearch extends Solver {
     }
 
     public double calculateMoveCost(Solution solution, LocalMove move){
+        if(move instanceof InterMove interMove){
+            return calculateInterMoveCost(solution,interMove);
+        }
+        return calculateIntraMoveCost(solution,(IntraMove) move);
+    }
+
+    private double calculateInterMoveCost(Solution solution, InterMove move){
+        double cost = 0;
+
+        int placementIndex = move.getInsideCityIndex();
+        City previousCity = solution.getCity(placementIndex-1);
+        City insideCity = solution.getCity(placementIndex);
+        City nextCity = solution.getCity(placementIndex+1);
+
+        City outsideCity = this.getProblem().getCity(move.getOutsideCityIndex());
+
+        cost += outsideCity.getCost();
+        cost -= insideCity.getCost();
+
+        cost += getProblem().getCostBetween(outsideCity,nextCity);
+        cost += getProblem().getCostBetween(outsideCity,previousCity);
+
+        cost -= getProblem().getCostBetween(insideCity,nextCity);
+        cost -= getProblem().getCostBetween(insideCity,previousCity);
+
+        return cost;
+    }
+
+    private double calculateIntraMoveCost(Solution solution, IntraMove move){
+        switch (move.getType()){
+            case NODES: return calculateIntraNodesMoveCost(solution,move);
+            case EDGES: return calculateIntraEdgesMoveCost(solution,move);
+        }
+        throw new IllegalArgumentException("Unknown move type");
+    }
+
+    private double calculateIntraNodesMoveCost(Solution solution, IntraMove move){
+        double cost = 0;
+
+        int city1Index = move.getIndex1();
+        int city2Index = move.getIndex2();
+
+        City prevCity1 = solution.getCity(city1Index-1);
+        City city1 = solution.getCity(city1Index);
+        City nextCity1 = solution.getCity(city1Index+1);
+
+        City prevCity2 = solution.getCity(city2Index-1);
+        City city2 = solution.getCity(city2Index);
+        City nextCity2 = solution.getCity(city2Index+1);
+
+        cost -= getProblem().getCostBetween(city1,prevCity1);
+        cost -= getProblem().getCostBetween(city1,nextCity1);
+
+        cost -= getProblem().getCostBetween(city2,prevCity2);
+        cost -= getProblem().getCostBetween(city2,nextCity2);
+
+        cost += getProblem().getCostBetween(city1,prevCity2);
+        cost += getProblem().getCostBetween(city1,nextCity2);
+
+        cost += getProblem().getCostBetween(city2,prevCity1);
+        cost += getProblem().getCostBetween(city2,nextCity1);
+
+        return cost;
+    }
+
+    private double calculateIntraEdgesMoveCost(Solution solution, IntraMove move){
+        // TODO
         return 0.0;
     }
 
-    @Override
-    public double getCostAtPosition(Solution solution, City newCity, int index) {
-        return 0;
-    }
 
     public List<LocalMove> getMoves(Solution solution){
+        // this is probably the bottleneck
         int n = getProblem().getNumberOfCities();
         List<LocalMove> moves = new ArrayList<>(n*n/2);
 
@@ -101,10 +165,7 @@ public class LocalSearch extends Solver {
                     moves.add(new InterMove(
                             solution.getCityIndexInOrder(city_j),
                             city_i.getIndex()));
-                    continue;
                 }
-
-                moves.add(new InterMove(city_i.getIndex(),city_j.getIndex()));
             }
         }
 

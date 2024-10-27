@@ -14,7 +14,6 @@ public abstract class Solver {
 
     abstract public Solution solve();
     abstract public Solution solve(int startingCityIndex);
-    abstract public double getCostAtPosition(Solution solution, City newCity,int index);
 
     public TravellingSalesmanProblem getProblem(){
         return problem;

@@ -2,6 +2,8 @@ package put.ec.solution;
 
 import put.ec.problem.City;
 import put.ec.problem.TravellingSalesmanProblem;
+import put.ec.solution.solvers.LocalSearch.InterMove;
+import put.ec.solution.solvers.LocalSearch.IntraMove;
 import put.ec.solution.solvers.LocalSearch.LocalMove;
 
 import java.util.ArrayList;
@@ -93,16 +95,12 @@ public class Solution {
         return cityLocations.get(city.getIndex());
     }
 
-    public void performMove(LocalMove move){
-
-    }
-
     public boolean isIn(City city){
         return this.inSolution.get(city.getIndex());
     }
 
     public City getCity(int index){
-        return this.cityOrder.get(index);
+        return this.cityOrder.get((index>=0?index%size():size()-1));
     }
 
     public City getLast(){
@@ -145,5 +143,46 @@ public class Solution {
 
     public void setProblem(TravellingSalesmanProblem problem) {
         this.problem = problem;
+    }
+
+    public void performMove(LocalMove move){
+        if(move instanceof InterMove interMove){
+            performInterMove(interMove);
+            return;
+        }
+        performIntraMove((IntraMove) move);
+    }
+
+    private void performInterMove(InterMove move){
+        int placementIndex = move.getInsideCityIndex();
+        City insideCity = getCity(placementIndex);
+        City outsideCity = getProblem().getCity(move.getOutsideCityIndex());
+        this.cityOrder.set(placementIndex,outsideCity);
+        this.inSolution.set(insideCity.getIndex(),false);
+        this.inSolution.set(outsideCity.getIndex(),true);
+        this.cityLocations.set(insideCity.getIndex(),-1);
+        this.cityLocations.set(outsideCity.getIndex(),placementIndex);
+    }
+
+    private void performIntraMove(IntraMove move){
+        switch (move.getType()){
+            case EDGES -> performIntraEdgeSwap(move);
+            case NODES -> performIntraNodeSwap(move);
+        }
+    }
+
+    private void performIntraNodeSwap(IntraMove move){
+        City city1 = this.getProblem().getCity(move.getIndex1());
+        City city2 = this.getProblem().getCity(move.getIndex2());
+        this.cityOrder.set(move.getIndex1(),city2);
+        this.cityOrder.set(move.getIndex2(),city1);
+        this.cityLocations.set(city1.getIndex(),move.getIndex2());
+        this.cityLocations.set(city2.getIndex(),move.getIndex1());
+    }
+
+    private void performIntraEdgeSwap(IntraMove move){
+        // TODO
+
+        //City city1 = this.getProblem().getCity()
     }
 }

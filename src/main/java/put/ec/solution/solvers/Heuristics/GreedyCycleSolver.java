@@ -28,10 +28,10 @@ public class GreedyCycleSolver extends NearestNeighbourAtAnySolver {
         }
 
         int previousIndex = (index-1);
-        previousIndex = previousIndex>=0?previousIndex:solution.size()-1;
+        //previousIndex = previousIndex>=0?previousIndex:solution.size()-1;
         City previousCity = solution.getCity(previousIndex);
 
-        City nextCity = solution.getCity(index%solution.size());
+        City nextCity = solution.getCity(index);
 
         cost += getProblem().getCostBetween(previousCity,newCity);
         cost += getProblem().getCostBetween(nextCity,newCity);
