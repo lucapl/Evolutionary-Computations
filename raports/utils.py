@@ -58,6 +58,28 @@ def get_best_solutions_and_table(solver_types,instances,all_json_data):
     return table, best_solutions
 
 
+def process_solver_data_2(solver_type, all_json_data, instance):
+    data = find_solver_type_and_instance(solver_type, all_json_data, instance)
+
+    avg = average_cost(data)
+    max_ = find_max(data).get('objective function')
+    min_ = find_min(data).get('objective function')
+    return find_min(data), avg, max_, min_
+
+
+def get_best_solutions_and_vertical_table(solver_types,instances,all_json_data):
+    best_solutions = {}
+    table = pd.DataFrame(columns=["Method", "Instance A", "Instance B"])
+    for solver in solver_types:
+        row_data = {"Method": solver}
+        for instance in instances:
+            best_solutions[f'{solver}_{instance}'], avg, max_, min_ = process_solver_data_2(solver, all_json_data, instance)
+            row_data[f"Instance {instance}"] = f"{avg} ({min_}-{max_})"
+        table = pd.concat([table, pd.DataFrame([row_data])], ignore_index=True)
+
+    return table, best_solutions
+
+
 def print_solutions(solver_types,instances,best_solutions):
     for solver in solver_types:
         print(f"Solver type: {solver}",end="")
@@ -73,7 +95,7 @@ def print_solutions(solver_types,instances,best_solutions):
                 \tStarting from: {best_solution.get("starting city")}""")
         print()
 
-def display_html(table):
-    html_table = table.to_html()
+def display_html(table,index=True):
+    html_table = table.to_html(index=index)
 
     display(HTML(html_table))
