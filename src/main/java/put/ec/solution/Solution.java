@@ -53,16 +53,16 @@ public class Solution {
     }
 
     public double getSolutionCost(){
-        if(cost < 0){
+//        if(cost < 0){
             cost = calculateSolutionCost();
-        }
+//        }
         return cost;
     }
 
     public double getEdgeLength(){
-        if(edgeLength < 0){
+//        if(edgeLength < 0){
             edgeLength = calculateEdgeLength();
-        }
+//        }
         return edgeLength;
     }
 
@@ -146,6 +146,8 @@ public class Solution {
     }
 
     public void performMove(LocalMove move){
+        cost = -1;
+        edgeLength = -1;
         if(move instanceof InterMove interMove){
             performInterMove(interMove);
             return;
@@ -172,12 +174,12 @@ public class Solution {
     }
 
     private void performIntraNodeSwap(IntraMove move){
-        City city1 = this.getProblem().getCity(move.getIndex1());
-        City city2 = this.getProblem().getCity(move.getIndex2());
+        City city1 = getCity(move.getIndex1());
+        City city2 = getCity(move.getIndex2());
         this.cityOrder.set(move.getIndex1(),city2);
         this.cityOrder.set(move.getIndex2(),city1);
-        this.cityLocations.set(city1.getIndex(),move.getIndex2());
         this.cityLocations.set(city2.getIndex(),move.getIndex1());
+        this.cityLocations.set(city1.getIndex(),move.getIndex2());
     }
 
     private void performIntraEdgeSwap(IntraMove move){

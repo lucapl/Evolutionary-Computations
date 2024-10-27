@@ -24,7 +24,7 @@ public class City {
 
     @Override
     public String toString(){
-        return "City at: "+getX()+", "+getY()+" Costing: "+getCost();
+        return "City "+getIndex() + " at: "+getX()+", "+getY()+" Costing: "+getCost();
     }
 
     public double getX() {

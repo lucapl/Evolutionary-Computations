@@ -6,8 +6,7 @@ import put.ec.solution.Solution;
 import put.ec.solution.SolutionWriter;
 import put.ec.solution.solvers.*;
 
-public class Experiment {
-
+abstract public class Experiment {
     public static void runExperiment(TravellingSalesmanProblem[] instances, String[] solvers,String outFolder){
         SolutionWriter solutionWriter = new SolutionWriter();
         SolverFactory solverFactory = new SolverFactory();

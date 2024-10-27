@@ -22,6 +22,8 @@ public class LocalSearch extends Solver {
         this.movesType = moveType;
         SolverFactory solverFactory = new SolverFactory();
         this.inititialSolver = solverFactory.createHeuristicSolver(heuristicName,problem);
+
+        setName("localSearch"+type.name()+moveType.name()+heuristicName);
     }
 
     @Override
@@ -33,10 +35,11 @@ public class LocalSearch extends Solver {
     public Solution solve(int startingCityIndex) {
         Solution solution = inititialSolver.solve(startingCityIndex);
         solution.calculateCityLocations();
+        System.out.println(solution.getObjectiveFunctionValue());
         boolean improvement;
         do{
             improvement = false;
-            double bestCost = 0;
+            double bestCost = Double.POSITIVE_INFINITY;
             LocalMove bestMove = null;
             List<LocalMove> moves = getMoves(solution); // get all possible moves
 
@@ -52,6 +55,7 @@ public class LocalSearch extends Solver {
                 }
                 improvement = true;
                 if(type==LocalSearchType.GREEDY){ //finish if greedy
+                    bestCost = moveCost;
                     bestMove = move;
                     break;
                 }
@@ -60,7 +64,13 @@ public class LocalSearch extends Solver {
                     bestMove = move;
                 }
             }
-            solution.performMove(bestMove);
+
+            if(bestMove != null){
+                solution.performMove(bestMove);
+                System.out.println(bestCost);
+                System.out.println(bestMove instanceof InterMove);
+                System.out.println(solution.getObjectiveFunctionValue());
+            }
         }while(improvement);
 
         return solution;
@@ -81,7 +91,7 @@ public class LocalSearch extends Solver {
         City insideCity = solution.getCity(placementIndex);
         City nextCity = solution.getCity(placementIndex+1);
 
-        City outsideCity = this.getProblem().getCity(move.getOutsideCityIndex());
+        City outsideCity = getProblem().getCity(move.getOutsideCityIndex());
 
         cost += outsideCity.getCost();
         cost -= insideCity.getCost();
@@ -117,17 +127,33 @@ public class LocalSearch extends Solver {
         City city2 = solution.getCity(city2Index);
         City nextCity2 = solution.getCity(city2Index+1);
 
-        cost -= getProblem().getCostBetween(city1,prevCity1);
-        cost -= getProblem().getCostBetween(city1,nextCity1);
+        if(city2 != prevCity1) {
+            cost -= getProblem().getCostBetween(city1, prevCity1);
+        }
+        if(city2 != nextCity1) {
+            cost -= getProblem().getCostBetween(city1, nextCity1);
+        }
 
-        cost -= getProblem().getCostBetween(city2,prevCity2);
-        cost -= getProblem().getCostBetween(city2,nextCity2);
+        if(city1 != prevCity2){
+            cost -= getProblem().getCostBetween(city2,prevCity2);
+        }
+        if(city1 != nextCity2){
+            cost -= getProblem().getCostBetween(city2,nextCity2);
+        }
 
-        cost += getProblem().getCostBetween(city1,prevCity2);
-        cost += getProblem().getCostBetween(city1,nextCity2);
+        if(city1 != prevCity2) {
+            cost += getProblem().getCostBetween(city1,prevCity2);
+        }
+        if(city1 != nextCity2) {
+            cost += getProblem().getCostBetween(city1,nextCity2);
+        }
 
-        cost += getProblem().getCostBetween(city2,prevCity1);
-        cost += getProblem().getCostBetween(city2,nextCity1);
+        if(city2 != nextCity1) {
+            cost += getProblem().getCostBetween(city2,prevCity1);
+        }
+        if(city2 != prevCity1){
+            cost += getProblem().getCostBetween(city2,nextCity1);
+        }
 
         return cost;
     }
@@ -141,11 +167,11 @@ public class LocalSearch extends Solver {
     public List<LocalMove> getMoves(Solution solution){
         // this is probably the bottleneck
         int n = getProblem().getNumberOfCities();
-        List<LocalMove> moves = new ArrayList<>(n*n/2);
+        List<LocalMove> moves = new ArrayList<>(n*n/2); // max capacity
 
         for(int i = 0; i<n; i++){
             City city_i = getProblem().getCity(i);
-            for(int j = i; j<n; j++){
+            for(int j = i+1; j<n; j++){
                 City city_j = getProblem().getCity(j);
 
                 if(solution.isIn(city_i) && solution.isIn(city_j)){
