@@ -2,6 +2,7 @@ package put.ec.solution;
 
 import put.ec.problem.City;
 import put.ec.problem.TravellingSalesmanProblem;
+import put.ec.solution.solvers.LocalSearch.LocalMove;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -10,6 +11,7 @@ import java.util.List;
 public class Solution {
     private List<City> cityOrder;
     private List<Boolean> inSolution;
+    private List<Integer> cityLocations;
     private TravellingSalesmanProblem problem;
     private double cost = -1;
     private double edgeLength = -1;
@@ -19,6 +21,7 @@ public class Solution {
         setProblem(tsp);
         cityOrder = new ArrayList<>();
         inSolution = new ArrayList<>(Collections.nCopies(getProblem().getNumberOfCities(),false));
+        cityLocations = new ArrayList<>(Collections.nCopies(getProblem().getNumberOfCities(),-1));
     }
 
     public double getCostBetween(City city1, City city2){
@@ -77,6 +80,21 @@ public class Solution {
     public void addCity(City city){
         this.cityOrder.add(city);
         this.inSolution.set(city.getIndex(),true);
+    }
+
+    public void calculateCityLocations(){
+        for(int i = 0; i < cityOrder.size();i++){
+            City city = cityOrder.get(i);
+            this.cityLocations.set(city.getIndex(),i);
+        }
+    }
+
+    public int getCityIndexInOrder(City city){
+        return cityLocations.get(city.getIndex());
+    }
+
+    public void performMove(LocalMove move){
+
     }
 
     public boolean isIn(City city){
