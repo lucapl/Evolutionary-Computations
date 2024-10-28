@@ -8,10 +8,19 @@ import put.ec.solution.solvers.Solver;
 
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 public class SolutionWriter {
 
     public void writeSolution(Solution solution, Solver solver, TravellingSalesmanProblem problemInstance, String outFolder){
+        try {
+            Files.createDirectories(Paths.get(outFolder));
+        } catch (IOException e){
+            System.err.println("SolutionWriter: Could not create the directory:");
+            e.printStackTrace();
+        }
+
         String solverName = solver.getName();
         int startingCity = solution.getStartingCityIndex();
         String instanceName = problemInstance.getName();

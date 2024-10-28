@@ -16,6 +16,7 @@ public class LocalSearch extends Solver {
     private HeuristicSolver inititialSolver;
     private LocalSearchType type;
     private IntraMovesType movesType;
+    private boolean validate = false;
 
     public LocalSearch(TravellingSalesmanProblem problem, String heuristicName, LocalSearchType type, IntraMovesType moveType){
         super(problem);
@@ -46,7 +47,10 @@ public class LocalSearch extends Solver {
         solution.calculateInSolutions();
 
         boolean improvement;
-//        double prevobj = solution.getObjectiveFunctionValue();
+        double prevobj = Double.POSITIVE_INFINITY;
+        if (validate) {
+            prevobj = solution.getObjectiveFunctionValue();
+        }
         iterations = 0;
         do{
             improvement = false;
@@ -79,13 +83,14 @@ public class LocalSearch extends Solver {
             if(bestMove != null){
                 solution.performMove(bestMove);
 
-//                double curobj = solution.getObjectiveFunctionValue();
-//
-//                if (curobj-prevobj != bestCost){
-//                    System.out.println("Change not equal!");
-//                    System.out.println((curobj-prevobj)-bestCost);
-//                }
-//                prevobj = curobj;
+                if(validate){
+                    double curobj = solution.getObjectiveFunctionValue();
+
+                    if (curobj-prevobj != bestCost){
+                        System.err.println("Change in cost not equal to expected! \nDifference: "+((curobj-prevobj)-bestCost));
+                    }
+                    prevobj = curobj;
+                }
             }
             iterations++;
         }while(improvement);

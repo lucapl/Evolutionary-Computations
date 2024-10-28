@@ -29,7 +29,7 @@ public class SolverFactory {
                 return new WeightedRegretHeuristic(problem, 0.5, 0.5);
             }
         }
-        System.out.println("Solver name not found");
+        System.err.println("Solver name not found");
         return null;
     }
 
