@@ -218,24 +218,19 @@ public class Solution {
     }
 
     private void performIntraEdgeSwap(IntraMove move){
-        int edge1Start = move.getIndex1();
-        int edge2Start = move.getIndex2();
+        int index1 = move.getIndex1();
+        int index2 = move.getIndex2();
 
+        int edge1Start = Math.min(index1, index2);
+        int edge2Start = Math.max(index1, index2);
 
-        if (checkIfNext(edge1Start,edge2Start)) {
-            int lowerIndex = getLowerIndex(edge1Start, edge2Start);
-
-            City tempCity1 = getCity(lowerIndex);
-
-            setCityAt(lowerIndex, getCity(lowerIndex + 2));
-            setCityAt(lowerIndex + 2, tempCity1);
-        } else {
-            City[] edge1 = {getCity(edge1Start),getCity(edge1Start+1)};
-            City[] edge2 = {getCity(edge2Start),getCity(edge2Start+1)};
-            for (int i = 0; i < 2; i++) {
-                setCityAt(edge1Start + i, edge2[i]);
-                setCityAt(edge2Start + i, edge1[i]);
-            }
+        edge1Start += 1;
+        while (edge1Start < edge2Start) {
+            City temp = getCity(edge1Start);
+            setCityAt(edge1Start, getCity(edge2Start));
+            setCityAt(edge2Start, temp);
+            edge1Start++;
+            edge2Start--;
         }
     }
 }

@@ -8,22 +8,21 @@ import put.ec.solution.solvers.Solver;
 import put.ec.solution.solvers.SolverFactory;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
 public class LocalSearch extends Solver {
-    private HeuristicSolver inititialSolver;
-    private LocalSearchType type;
-    private IntraMovesType movesType;
-    private boolean validate = false;
+    private final HeuristicSolver initialSolver;
+    private final LocalSearchType type;
+    private final IntraMovesType movesType;
+    private boolean validate = true;
 
     public LocalSearch(TravellingSalesmanProblem problem, String heuristicName, LocalSearchType type, IntraMovesType moveType){
         super(problem);
         this.type = type;
         this.movesType = moveType;
         SolverFactory solverFactory = new SolverFactory();
-        this.inititialSolver = solverFactory.createHeuristicSolver(heuristicName,problem);
+        this.initialSolver = solverFactory.createHeuristicSolver(heuristicName,problem);
 
         setName("localSearch"+type.name()+moveType.name()+simplifyHeuristicName(heuristicName));
     }
@@ -42,7 +41,7 @@ public class LocalSearch extends Solver {
 
     @Override
     public Solution solve(int startingCityIndex) {
-        Solution solution = inititialSolver.solve(startingCityIndex);
+        Solution solution = initialSolver.solve(startingCityIndex);
         solution.calculateCityLocations();
         solution.calculateInSolutions();
 
@@ -176,53 +175,17 @@ public class LocalSearch extends Solver {
         int edge1Start = move.getIndex1();
         int edge2Start = move.getIndex2();
 
-        //TODO find a way to not treat the cases manually
-        if (solution.checkIfNext(edge1Start,edge2Start)) {
-            // Adjacent edges case
-            int lowerIndex = solution.getLowerIndex(edge1Start, edge2Start);
-            City lowerPrev = solution.getCity(lowerIndex - 1);
-            City upperNext = solution.getCity(lowerIndex + 3);
+        City city1 = solution.getCity(edge1Start);
+        City city1Next = solution.getCity(edge1Start+1);
 
-            cost -= getProblem().getCostBetween(lowerPrev, solution.getCity(lowerIndex));
-            cost -= getProblem().getCostBetween(solution.getCity(lowerIndex + 2), upperNext);
+        City city2 = solution.getCity(edge2Start);
+        City city2Next = solution.getCity(edge2Start+1);
 
-            cost += getProblem().getCostBetween(lowerPrev, solution.getCity(lowerIndex + 2));
-            cost += getProblem().getCostBetween(solution.getCity(lowerIndex), upperNext);
-        } else if (solution.checkDist(edge1Start,edge2Start,2)) {
-            //close edges case
-            int lowerIndex = solution.getLowerIndexDist(edge1Start, edge2Start,2);
-            City lowerPrev = solution.getCity(lowerIndex - 1);
-            City upperNext = solution.getCity(lowerIndex + 4);
+        cost -= getProblem().getCostBetween(city1,city1Next);
+        cost -= getProblem().getCostBetween(city2,city2Next);
 
-            cost -= getProblem().getCostBetween(lowerPrev, solution.getCity(lowerIndex));
-            cost -= getProblem().getCostBetween(solution.getCity(lowerIndex + 3), upperNext);
-            cost -= getProblem().getCostBetween(solution.getCity(lowerIndex + 1), solution.getCity(lowerIndex + 2));
-
-            cost += getProblem().getCostBetween(lowerPrev, solution.getCity(lowerIndex + 2));
-            cost += getProblem().getCostBetween(solution.getCity(lowerIndex+1), upperNext);
-            cost += getProblem().getCostBetween(solution.getCity(lowerIndex), solution.getCity(lowerIndex+3));
-        } else{
-
-            City[] edge1 = {solution.getCity(edge1Start),solution.getCity(edge1Start+1)};
-
-            City[] edge2 = {solution.getCity(edge2Start),solution.getCity(edge2Start+1)};
-
-            City[] edge1neigh = {solution.getCity(edge1Start-1),solution.getCity(edge1Start+2)};
-            City[] edge2neigh = {solution.getCity(edge2Start-1),solution.getCity(edge2Start+2)};
-
-            for(int i = 0; i<2;i++){
-                int finalI = i;
-                if(Arrays.stream(edge2).noneMatch(x-> x == edge1neigh[finalI])){
-                    cost -= getProblem().getCostBetween(edge1[i],edge1neigh[i]);
-                }
-                if(Arrays.stream(edge1).noneMatch(x-> x == edge2neigh[finalI])) {
-                    cost -= getProblem().getCostBetween(edge2[i], edge2neigh[i]);
-                }
-
-                cost += getProblem().getCostBetween(edge1[i],edge2neigh[i]);
-                cost += getProblem().getCostBetween(edge2[i],edge1neigh[i]);
-            }
-        }
+        cost += getProblem().getCostBetween(city1Next,city2Next);
+        cost += getProblem().getCostBetween(city1,city2);
 
         return cost;
     }
