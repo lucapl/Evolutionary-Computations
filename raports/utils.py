@@ -92,7 +92,11 @@ def print_solutions(solver_types,instances,best_solutions):
                 \tObjective function: {best_solution.get('objective function')}
                 \tSolution:\n{best_solution.get('cityOrder')}
                 \tSolution length: {len(best_solution.get('cityOrder'))}
-                \tStarting from: {best_solution.get("starting city")}""")
+                \tNo repeats?: {len(best_solution.get('cityOrder')) == len(set(best_solution.get('cityOrder')))}
+                \tStarting from: {best_solution.get("starting city")}""", end="")
+            if "iterations" in best_solution: print(f"""
+                \tIterations: {best_solution.get("iterations")}
+                  """)
         print()
 
 def display_html(table,index=True):
