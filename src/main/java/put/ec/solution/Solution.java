@@ -75,7 +75,13 @@ public class Solution {
     }
 
     public void addCityAt(int index, City city){
-        this.cityOrder.add(index,city);
+        this.cityOrder.add(loopIndex(index),city);
+        this.inSolution.set(city.getIndex(),true);
+    }
+
+    public void setCityAt(int index, City city){
+        this.cityOrder.set(loopIndex(index),city);
+        this.cityLocations.set(city.getIndex(),loopIndex(index));
         this.inSolution.set(city.getIndex(),true);
     }
 
@@ -91,6 +97,36 @@ public class Solution {
         }
     }
 
+    public void calculateInSolutions(){
+        for(int i = 0; i < cityOrder.size();i++){
+            City city = cityOrder.get(i);
+            this.inSolution.set(city.getIndex(),true);
+        }
+    }
+
+    public int loopIndex(int index){
+        return (index>=0?index%size():size()-1);
+    }
+
+    public boolean checkIfNext(int index1, int index2){
+        return checkDist(index1,index2,1);
+    }
+
+    public boolean checkDist(int index1, int index2, int dist){
+        return loopIndex(index1+dist) == loopIndex(index2) || loopIndex(index1) == loopIndex(index2+dist);
+    }
+
+    public int getLowerIndex(int index1, int index2){
+        return getLowerIndexDist(index1,index2,1);
+    }
+
+    public int getLowerIndexDist(int index1, int index2, int dist){
+        if(loopIndex(index1+dist) == loopIndex(index2)){
+            return index1;
+        }
+        return index2;
+    }
+
     public int getCityIndexInOrder(City city){
         return cityLocations.get(city.getIndex());
     }
@@ -100,7 +136,7 @@ public class Solution {
     }
 
     public City getCity(int index){
-        return this.cityOrder.get((index>=0?index%size():size()-1));
+        return this.cityOrder.get(loopIndex(index));
     }
 
     public City getLast(){
@@ -159,32 +195,47 @@ public class Solution {
         int placementIndex = move.getInsideCityIndex();
         City insideCity = getCity(placementIndex);
         City outsideCity = getProblem().getCity(move.getOutsideCityIndex());
-        this.cityOrder.set(placementIndex,outsideCity);
+
+        setCityAt(placementIndex,outsideCity);
+
         this.inSolution.set(insideCity.getIndex(),false);
-        this.inSolution.set(outsideCity.getIndex(),true);
         this.cityLocations.set(insideCity.getIndex(),-1);
-        this.cityLocations.set(outsideCity.getIndex(),placementIndex);
     }
 
     private void performIntraMove(IntraMove move){
         switch (move.getType()){
-            case EDGES -> performIntraEdgeSwap(move);
-            case NODES -> performIntraNodeSwap(move);
+            case Edges -> performIntraEdgeSwap(move);
+            case Nodes -> performIntraNodeSwap(move);
         }
     }
 
     private void performIntraNodeSwap(IntraMove move){
         City city1 = getCity(move.getIndex1());
         City city2 = getCity(move.getIndex2());
-        this.cityOrder.set(move.getIndex1(),city2);
-        this.cityOrder.set(move.getIndex2(),city1);
-        this.cityLocations.set(city2.getIndex(),move.getIndex1());
-        this.cityLocations.set(city1.getIndex(),move.getIndex2());
+
+        setCityAt(move.getIndex1(),city2);
+        setCityAt(move.getIndex2(),city1);
     }
 
     private void performIntraEdgeSwap(IntraMove move){
-        // TODO
+        int edge1Start = move.getIndex1();
+        int edge2Start = move.getIndex2();
 
-        //City city1 = this.getProblem().getCity()
+
+        if (checkIfNext(edge1Start,edge2Start)) {
+            int lowerIndex = getLowerIndex(edge1Start, edge2Start);
+
+            City tempCity1 = getCity(lowerIndex);
+
+            setCityAt(lowerIndex, getCity(lowerIndex + 2));
+            setCityAt(lowerIndex + 2, tempCity1);
+        } else {
+            City[] edge1 = {getCity(edge1Start),getCity(edge1Start+1)};
+            City[] edge2 = {getCity(edge2Start),getCity(edge2Start+1)};
+            for (int i = 0; i < 2; i++) {
+                setCityAt(edge1Start + i, edge2[i]);
+                setCityAt(edge2Start + i, edge1[i]);
+            }
+        }
     }
 }

@@ -10,7 +10,7 @@ public class Assignment3 extends Experiment{
         InstanceLoader il = new InstanceLoader();
 
         TravellingSalesmanProblem[] instances = {il.load("instances/TSPA.csv","A"),il.load("instances/TSPB.csv","B")};
-        String[] solvers = new String[4];
+        String[] solvers = new String[8];
 
         combineSolverNames(solvers);
 
@@ -22,7 +22,7 @@ public class Assignment3 extends Experiment{
     private static void combineSolverNames(String[] solvers){
         String solverName = "localSearch";
         String[] solverTypes = {"Greedy", "Steepest"};
-        String[] intraTypes = {"Nodes"};//, "Edges"};
+        String[] intraTypes = {"Nodes", "Edges"};
         String[] startTypes = {"Heuristic", "Random"};
         int i = 0;
         for(String solverType: solverTypes){
@@ -33,6 +33,5 @@ public class Assignment3 extends Experiment{
                 }
             }
         }
-        System.out.println(Arrays.toString(solvers));
     }
 }

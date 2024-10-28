@@ -8,6 +8,8 @@ public abstract class Solver {
     private final TravellingSalesmanProblem problem;
     private String name;
 
+    public int iterations = -1;
+
     public Solver(TravellingSalesmanProblem problem){
         this.problem = problem;
     }

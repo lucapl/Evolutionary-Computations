@@ -24,6 +24,9 @@ public class SolutionWriter {
         jsonObject.put("edge length",solution.getEdgeLength());
         jsonObject.put("objective function",solution.getObjectiveFunctionValue());
         jsonObject.put("starting city", solution.getStartingCityIndex());
+        if(solver.iterations >= 0){
+            jsonObject.put("iterations", solver.iterations);
+        }
 
         JSONArray jsonArray = new JSONArray();
         for(City city: solution.getCityOrder()){

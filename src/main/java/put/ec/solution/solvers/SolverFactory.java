@@ -38,21 +38,21 @@ public class SolverFactory {
 
         return switch (name) {
             case "localSearchSteepestNodesHeuristic" -> //not the most elegant, but does not affect anything
-                    new LocalSearch(problem, bestHeuristic, LocalSearchType.STEEPEST, IntraMovesType.NODES);
+                    new LocalSearch(problem, bestHeuristic, LocalSearchType.Steepest, IntraMovesType.Nodes);
             case "localSearchGreedyNodesHeuristic" ->
-                    new LocalSearch(problem, bestHeuristic, LocalSearchType.GREEDY, IntraMovesType.NODES);
+                    new LocalSearch(problem, bestHeuristic, LocalSearchType.Greedy, IntraMovesType.Nodes);
             case "localSearchSteepestEdgesHeuristic" ->
-                    new LocalSearch(problem, bestHeuristic, LocalSearchType.STEEPEST, IntraMovesType.EDGES);
+                    new LocalSearch(problem, bestHeuristic, LocalSearchType.Steepest, IntraMovesType.Edges);
             case "localSearchGreedyEdgesHeuristic" ->
-                    new LocalSearch(problem, bestHeuristic, LocalSearchType.GREEDY, IntraMovesType.EDGES);
+                    new LocalSearch(problem, bestHeuristic, LocalSearchType.Greedy, IntraMovesType.Edges);
             case "localSearchSteepestNodesRandom" ->
-                    new LocalSearch(problem, "random", LocalSearchType.STEEPEST, IntraMovesType.NODES);
+                    new LocalSearch(problem, "random", LocalSearchType.Steepest, IntraMovesType.Nodes);
             case "localSearchGreedyNodesRandom" ->
-                    new LocalSearch(problem, "random", LocalSearchType.GREEDY, IntraMovesType.NODES);
+                    new LocalSearch(problem, "random", LocalSearchType.Greedy, IntraMovesType.Nodes);
             case "localSearchSteepestEdgesRandom" ->
-                    new LocalSearch(problem, "random", LocalSearchType.STEEPEST, IntraMovesType.EDGES);
+                    new LocalSearch(problem, "random", LocalSearchType.Steepest, IntraMovesType.Edges);
             case "localSearchGreedyEdgesRandom" ->
-                    new LocalSearch(problem, "random", LocalSearchType.GREEDY, IntraMovesType.EDGES);
+                    new LocalSearch(problem, "random", LocalSearchType.Greedy, IntraMovesType.Edges);
             default ->
 
                 // TODO: make the upper code nice

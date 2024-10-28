@@ -8,6 +8,7 @@ import put.ec.solution.solvers.Solver;
 import put.ec.solution.solvers.SolverFactory;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -23,7 +24,14 @@ public class LocalSearch extends Solver {
         SolverFactory solverFactory = new SolverFactory();
         this.inititialSolver = solverFactory.createHeuristicSolver(heuristicName,problem);
 
-        setName("localSearch"+type.name()+moveType.name()+heuristicName);
+        setName("localSearch"+type.name()+moveType.name()+simplifyHeuristicName(heuristicName));
+    }
+
+    private String simplifyHeuristicName(String heuristicName){
+        if(heuristicName.equals("random")){
+            return "Random";
+        }
+        return "Heuristic";
     }
 
     @Override
@@ -35,15 +43,18 @@ public class LocalSearch extends Solver {
     public Solution solve(int startingCityIndex) {
         Solution solution = inititialSolver.solve(startingCityIndex);
         solution.calculateCityLocations();
-        System.out.println(solution.getObjectiveFunctionValue());
+        solution.calculateInSolutions();
+
         boolean improvement;
+//        double prevobj = solution.getObjectiveFunctionValue();
+        iterations = 0;
         do{
             improvement = false;
             double bestCost = Double.POSITIVE_INFINITY;
             LocalMove bestMove = null;
             List<LocalMove> moves = getMoves(solution); // get all possible moves
 
-            if(type == LocalSearchType.GREEDY){ // shuffle them if greedy
+            if(type == LocalSearchType.Greedy){ // shuffle them if greedy
                 Collections.shuffle(moves); //this is Fisher-Yates shuffle
             }
 
@@ -54,7 +65,7 @@ public class LocalSearch extends Solver {
                     continue;
                 }
                 improvement = true;
-                if(type==LocalSearchType.GREEDY){ //finish if greedy
+                if(type==LocalSearchType.Greedy){ //finish if greedy
                     bestCost = moveCost;
                     bestMove = move;
                     break;
@@ -67,10 +78,16 @@ public class LocalSearch extends Solver {
 
             if(bestMove != null){
                 solution.performMove(bestMove);
-                System.out.println(bestCost);
-                System.out.println(bestMove instanceof InterMove);
-                System.out.println(solution.getObjectiveFunctionValue());
+
+//                double curobj = solution.getObjectiveFunctionValue();
+//
+//                if (curobj-prevobj != bestCost){
+//                    System.out.println("Change not equal!");
+//                    System.out.println((curobj-prevobj)-bestCost);
+//                }
+//                prevobj = curobj;
             }
+            iterations++;
         }while(improvement);
 
         return solution;
@@ -107,8 +124,8 @@ public class LocalSearch extends Solver {
 
     private double calculateIntraMoveCost(Solution solution, IntraMove move){
         switch (move.getType()){
-            case NODES: return calculateIntraNodesMoveCost(solution,move);
-            case EDGES: return calculateIntraEdgesMoveCost(solution,move);
+            case Nodes: return calculateIntraNodesMoveCost(solution,move);
+            case Edges: return calculateIntraEdgesMoveCost(solution,move);
         }
         throw new IllegalArgumentException("Unknown move type");
     }
@@ -141,33 +158,75 @@ public class LocalSearch extends Solver {
             cost -= getProblem().getCostBetween(city2,nextCity2);
         }
 
-        if(city1 != prevCity2) {
-            cost += getProblem().getCostBetween(city1,prevCity2);
-        }
-        if(city1 != nextCity2) {
-            cost += getProblem().getCostBetween(city1,nextCity2);
-        }
-
-        if(city2 != nextCity1) {
-            cost += getProblem().getCostBetween(city2,prevCity1);
-        }
-        if(city2 != prevCity1){
-            cost += getProblem().getCostBetween(city2,nextCity1);
-        }
+        cost += getProblem().getCostBetween(city1,prevCity2);
+        cost += getProblem().getCostBetween(city1,nextCity2);
+        cost += getProblem().getCostBetween(city2,prevCity1);
+        cost += getProblem().getCostBetween(city2,nextCity1);
 
         return cost;
     }
 
     private double calculateIntraEdgesMoveCost(Solution solution, IntraMove move){
-        // TODO
-        return 0.0;
+        double cost = 0;
+        int edge1Start = move.getIndex1();
+        int edge2Start = move.getIndex2();
+
+        //TODO find a way to not treat the cases manually
+        if (solution.checkIfNext(edge1Start,edge2Start)) {
+            // Adjacent edges case
+            int lowerIndex = solution.getLowerIndex(edge1Start, edge2Start);
+            City lowerPrev = solution.getCity(lowerIndex - 1);
+            City upperNext = solution.getCity(lowerIndex + 3);
+
+            cost -= getProblem().getCostBetween(lowerPrev, solution.getCity(lowerIndex));
+            cost -= getProblem().getCostBetween(solution.getCity(lowerIndex + 2), upperNext);
+
+            cost += getProblem().getCostBetween(lowerPrev, solution.getCity(lowerIndex + 2));
+            cost += getProblem().getCostBetween(solution.getCity(lowerIndex), upperNext);
+        } else if (solution.checkDist(edge1Start,edge2Start,2)) {
+            //close edges case
+            int lowerIndex = solution.getLowerIndexDist(edge1Start, edge2Start,2);
+            City lowerPrev = solution.getCity(lowerIndex - 1);
+            City upperNext = solution.getCity(lowerIndex + 4);
+
+            cost -= getProblem().getCostBetween(lowerPrev, solution.getCity(lowerIndex));
+            cost -= getProblem().getCostBetween(solution.getCity(lowerIndex + 3), upperNext);
+            cost -= getProblem().getCostBetween(solution.getCity(lowerIndex + 1), solution.getCity(lowerIndex + 2));
+
+            cost += getProblem().getCostBetween(lowerPrev, solution.getCity(lowerIndex + 2));
+            cost += getProblem().getCostBetween(solution.getCity(lowerIndex+1), upperNext);
+            cost += getProblem().getCostBetween(solution.getCity(lowerIndex), solution.getCity(lowerIndex+3));
+        } else{
+
+            City[] edge1 = {solution.getCity(edge1Start),solution.getCity(edge1Start+1)};
+
+            City[] edge2 = {solution.getCity(edge2Start),solution.getCity(edge2Start+1)};
+
+            City[] edge1neigh = {solution.getCity(edge1Start-1),solution.getCity(edge1Start+2)};
+            City[] edge2neigh = {solution.getCity(edge2Start-1),solution.getCity(edge2Start+2)};
+
+            for(int i = 0; i<2;i++){
+                int finalI = i;
+                if(Arrays.stream(edge2).noneMatch(x-> x == edge1neigh[finalI])){
+                    cost -= getProblem().getCostBetween(edge1[i],edge1neigh[i]);
+                }
+                if(Arrays.stream(edge1).noneMatch(x-> x == edge2neigh[finalI])) {
+                    cost -= getProblem().getCostBetween(edge2[i], edge2neigh[i]);
+                }
+
+                cost += getProblem().getCostBetween(edge1[i],edge2neigh[i]);
+                cost += getProblem().getCostBetween(edge2[i],edge1neigh[i]);
+            }
+        }
+
+        return cost;
     }
 
 
     public List<LocalMove> getMoves(Solution solution){
         // this is probably the bottleneck
         int n = getProblem().getNumberOfCities();
-        List<LocalMove> moves = new ArrayList<>(n*n/2); // max capacity
+        List<LocalMove> moves = new ArrayList<>(getProblem().getNumberOfCities()*getProblem().getSolutionLength()); // max capacity
 
         for(int i = 0; i<n; i++){
             City city_i = getProblem().getCity(i);
@@ -185,7 +244,6 @@ public class LocalSearch extends Solver {
                     moves.add(new InterMove(
                             solution.getCityIndexInOrder(city_i),
                             city_j.getIndex()));
-                    continue;
                 }
                 if(solution.isIn(city_j)){
                     moves.add(new InterMove(
