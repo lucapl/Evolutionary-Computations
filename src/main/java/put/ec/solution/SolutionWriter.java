@@ -5,6 +5,7 @@ import org.json.simple.JSONObject;
 import put.ec.problem.City;
 import put.ec.problem.TravellingSalesmanProblem;
 import put.ec.solution.solvers.Solver;
+import put.ec.utils.TimeMeasure;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -13,7 +14,7 @@ import java.nio.file.Paths;
 
 public class SolutionWriter {
 
-    public void writeSolution(Solution solution, Solver solver, TravellingSalesmanProblem problemInstance, String outFolder){
+    public void writeSolution(Solution solution, Solver solver, TimeMeasure timeMeasure, TravellingSalesmanProblem problemInstance, String outFolder){
         try {
             Files.createDirectories(Paths.get(outFolder));
         } catch (IOException e){
@@ -33,6 +34,7 @@ public class SolutionWriter {
         jsonObject.put("edge length",solution.getEdgeLength());
         jsonObject.put("objective function",solution.getObjectiveFunctionValue());
         jsonObject.put("starting city", solution.getStartingCityIndex());
+        jsonObject.put("elapsed time", timeMeasure.getElapsedTime(-6));//the default is is nanoseconds
         if(solver.iterations >= 0){
             jsonObject.put("iterations", solver.iterations);
         }
