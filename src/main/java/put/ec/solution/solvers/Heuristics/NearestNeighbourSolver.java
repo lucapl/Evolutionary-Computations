@@ -29,8 +29,13 @@ public class NearestNeighbourSolver extends HeuristicSolver{
         int previousIndex = (index-1);
         previousIndex = previousIndex>=0?previousIndex:solution.size()-1;
         City previousCity = solution.getCity(previousIndex);
-
         cost += getProblem().getCostBetween(previousCity,newCity);
+
+        if(index < solution.size()){
+            City nextCity = solution.getCity(index);
+            cost += getProblem().getCostBetween(nextCity,newCity);
+            cost -= getProblem().getCostBetween(previousCity,nextCity);
+        }
 
         return cost;
     }
