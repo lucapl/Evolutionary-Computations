@@ -27,7 +27,7 @@ def plot_solution(solution, coordinates_df, title):
     p = (ggplot() +
          geom_point(aes(x=coordinates_df[0], y=coordinates_df[1]), data=coordinates_df, color='grey', alpha=0.5, size=3) +
          geom_path(aes(x='x', y='y'), data=solution_df, color='black', size=1) +
-         geom_point(aes(x='x', y='y', color='cost', size='cost'), data=solution_df, alpha=0.5) +
+         geom_point(aes(x='x', y='y', color='cost', size='cost'), data=coordinates_df, alpha=0.5) +
          scale_color_gradient(low='blue', high='red') +
          labs(title=title) +
          theme_minimal())

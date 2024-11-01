@@ -2,6 +2,7 @@ package put.ec.solution.solvers;
 
 import put.ec.problem.TravellingSalesmanProblem;
 import put.ec.solution.solvers.Heuristics.*;
+import put.ec.solution.solvers.LocalSearch.CandidateSearch;
 import put.ec.solution.solvers.LocalSearch.IntraMovesType;
 import put.ec.solution.solvers.LocalSearch.LocalSearch;
 import put.ec.solution.solvers.LocalSearch.LocalSearchType;
@@ -53,6 +54,14 @@ public class SolverFactory {
                     new LocalSearch(problem, "random", LocalSearchType.Steepest, IntraMovesType.Edges);
             case "localSearchGreedyEdgesRandom" ->
                     new LocalSearch(problem, "random", LocalSearchType.Greedy, IntraMovesType.Edges);
+            case "candidateSearchSteepestNodesRandom" ->
+                    new CandidateSearch(problem, "random", LocalSearchType.Steepest, IntraMovesType.Nodes);
+            case "candidateSearchGreedyNodesRandom" ->
+                    new CandidateSearch(problem, "random", LocalSearchType.Greedy, IntraMovesType.Nodes);
+            case "candidateSearchSteepestEdgesRandom" ->
+                    new CandidateSearch(problem, "random", LocalSearchType.Steepest, IntraMovesType.Edges);
+            case "candidateSearchGreedyEdgesRandom" ->
+                    new CandidateSearch(problem, "random", LocalSearchType.Greedy, IntraMovesType.Edges);
             default ->
 
                 // TODO: make the upper code nice
