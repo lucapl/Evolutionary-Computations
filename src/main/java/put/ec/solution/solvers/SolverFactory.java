@@ -36,6 +36,7 @@ public class SolverFactory {
 
     public Solver createSolver(String name, TravellingSalesmanProblem problem){
         String bestHeuristic = "weightedRegretHeuristic";
+        int numberOfCandidateMoves = 10;
 
         return switch (name) {
             case "localSearchSteepestNodesHeuristic" -> //not the most elegant, but does not affect anything
@@ -55,13 +56,13 @@ public class SolverFactory {
             case "localSearchGreedyEdgesRandom" ->
                     new LocalSearch(problem, "random", LocalSearchType.Greedy, IntraMovesType.Edges);
             case "candidateSearchSteepestNodesRandom" ->
-                    new CandidateSearch(problem, "random", LocalSearchType.Steepest, IntraMovesType.Nodes);
+                    new CandidateSearch(problem, "random", LocalSearchType.Steepest, IntraMovesType.Nodes, numberOfCandidateMoves);
             case "candidateSearchGreedyNodesRandom" ->
-                    new CandidateSearch(problem, "random", LocalSearchType.Greedy, IntraMovesType.Nodes);
+                    new CandidateSearch(problem, "random", LocalSearchType.Greedy, IntraMovesType.Nodes, numberOfCandidateMoves);
             case "candidateSearchSteepestEdgesRandom" ->
-                    new CandidateSearch(problem, "random", LocalSearchType.Steepest, IntraMovesType.Edges);
+                    new CandidateSearch(problem, "random", LocalSearchType.Steepest, IntraMovesType.Edges, numberOfCandidateMoves);
             case "candidateSearchGreedyEdgesRandom" ->
-                    new CandidateSearch(problem, "random", LocalSearchType.Greedy, IntraMovesType.Edges);
+                    new CandidateSearch(problem, "random", LocalSearchType.Greedy, IntraMovesType.Edges, numberOfCandidateMoves);
             default ->
 
                 // TODO: make the upper code nice
