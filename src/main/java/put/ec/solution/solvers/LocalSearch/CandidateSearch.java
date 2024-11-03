@@ -3,6 +3,8 @@ package put.ec.solution.solvers.LocalSearch;
 import put.ec.problem.City;
 import put.ec.problem.TravellingSalesmanProblem;
 import put.ec.solution.Solution;
+import put.ec.solution.solvers.Heuristics.HeuristicSolver;
+import put.ec.solution.solvers.SolverFactory;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -11,12 +13,15 @@ import java.util.List;
 public class CandidateSearch extends LocalSearch{
 
     private final IntraMovesType movesType;
+    private final HeuristicSolver initialSolver;
     private final int numberOfCandidateMoves;
 
     public CandidateSearch(TravellingSalesmanProblem problem, String heuristicName, LocalSearchType type, IntraMovesType moveType, int numberOfCandidateMoves) {
         super(problem, heuristicName, type, moveType);
         this.movesType = moveType;
         this.numberOfCandidateMoves = numberOfCandidateMoves;
+        SolverFactory solverFactory = new SolverFactory();
+        this.initialSolver = solverFactory.createHeuristicSolver(heuristicName,problem);
     }
 
     @Override
@@ -59,5 +64,43 @@ public class CandidateSearch extends LocalSearch{
 
         }
         return moves;
+    }
+
+    @Override
+    public Solution solve(int startingCityIndex){
+        Solution solution = initialSolver.solve(startingCityIndex);
+        solution.calculateCityLocations();
+        solution.calculateInSolutions();
+        List<LocalMove> moves = getMoves(solution);
+
+        boolean improvement;
+        double prevobj = Double.POSITIVE_INFINITY;
+        iterations = 0;
+        do{
+            improvement = false;
+            double bestCost = Double.POSITIVE_INFINITY;
+            LocalMove bestMove = null;
+
+
+            for(LocalMove move: moves){
+                double moveCost = calculateMoveCost(solution,move);
+
+                if (moveCost >= 0){ //ignore non improving cost
+                    continue;
+                }
+                improvement = true;
+                if(moveCost < bestCost){ //steepest
+                    bestCost = moveCost;
+                    bestMove = move;
+                }
+            }
+
+            if(bestMove != null){
+                solution.performMove(bestMove);
+            }
+            iterations++;
+        }while(improvement);
+
+        return solution;
     }
 }
