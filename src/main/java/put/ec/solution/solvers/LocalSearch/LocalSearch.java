@@ -27,7 +27,7 @@ public class LocalSearch extends Solver {
         setName("localSearch"+type.name()+moveType.name()+simplifyHeuristicName(heuristicName));
     }
 
-    private String simplifyHeuristicName(String heuristicName){
+    protected String simplifyHeuristicName(String heuristicName){
         if(heuristicName.equals("random")){
             return "Random";
         }

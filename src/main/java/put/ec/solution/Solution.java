@@ -2,9 +2,7 @@ package put.ec.solution;
 
 import put.ec.problem.City;
 import put.ec.problem.TravellingSalesmanProblem;
-import put.ec.solution.solvers.LocalSearch.InterMove;
-import put.ec.solution.solvers.LocalSearch.IntraMove;
-import put.ec.solution.solvers.LocalSearch.LocalMove;
+import put.ec.solution.solvers.LocalSearch.*;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -232,5 +230,33 @@ public class Solution {
             edge1Start++;
             edge2Start--;
         }
+    }
+
+    public LocalMove determineMove(CandidateEdgeMove move){
+        City city_1 = getProblem().getCity(move.getIndex1());
+        City city_2 = getProblem().getCity(move.getIndex2());
+
+        if(isIn(city_1) && isIn(city_2)){
+            int city1Index = getCityIndexInOrder(city_1);
+            if(move.getType() == IntraMovesType.Nodes){
+                city1Index = loopIndex(city1Index+1);
+            }
+            return new IntraMove(
+                    city1Index,
+                    getCityIndexInOrder(city_2),
+                    move.getType());
+        }
+        if(isIn(city_1)){
+            return new InterMove(
+                    loopIndex(getCityIndexInOrder(city_1)+1),
+                    city_2.getIndex());
+        }
+        if(isIn(city_2)){
+            return new InterMove(
+                    loopIndex(getCityIndexInOrder(city_2)+1),
+                    city_1.getIndex());
+        }
+
+        return null;
     }
 }

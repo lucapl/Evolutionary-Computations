@@ -15,48 +15,37 @@ public class CandidateSearch extends LocalSearch{
     private final IntraMovesType movesType;
     private final HeuristicSolver initialSolver;
     private final int numberOfCandidateMoves;
+    private final List<CandidateEdgeMove> candidateMoves;
 
-    public CandidateSearch(TravellingSalesmanProblem problem, String heuristicName, LocalSearchType type, IntraMovesType moveType, int numberOfCandidateMoves) {
-        super(problem, heuristicName, type, moveType);
+    public CandidateSearch(TravellingSalesmanProblem problem, String heuristicName, IntraMovesType moveType, int numberOfCandidateMoves) {
+        super(problem, heuristicName, LocalSearchType.Steepest, moveType);
         this.movesType = moveType;
         this.numberOfCandidateMoves = numberOfCandidateMoves;
         SolverFactory solverFactory = new SolverFactory();
         this.initialSolver = solverFactory.createHeuristicSolver(heuristicName,problem);
+
+        candidateMoves = getCandidateMoves();
+
+        setName("candidateSearch"+moveType.name()+simplifyHeuristicName(heuristicName));
     }
 
-    @Override
-    public List<LocalMove> getMoves(Solution solution){
+    public List<CandidateEdgeMove> getCandidateMoves(){
 
         int n = getProblem().getNumberOfCities();
-        List<LocalMove> moves = new ArrayList<>(n*getProblem().getSolutionLength());
+        List<CandidateEdgeMove> moves = new ArrayList<>(n*getProblem().getSolutionLength());
 
 
         for(int i = 0; i<n; i++){
             City city_i = getProblem().getCity(i);
-            List<LocalMove> potentialMoves = new ArrayList<>(getProblem().getSolutionLength());
+            List<CandidateEdgeMove> potentialMoves = new ArrayList<>(getProblem().getNumberOfCities());
             for(int j = i+1; j<n; j++){
                 City city_j = getProblem().getCity(j);
 
-                if(solution.isIn(city_i) && solution.isIn(city_j)){
-                    potentialMoves.add(new IntraMove(
-                            solution.getCityIndexInOrder(city_i),
-                            solution.getCityIndexInOrder(city_j),
-                            this.movesType));
-                    continue;
-                }
-                if(solution.isIn(city_i)){
-                    potentialMoves.add(new InterMove(
-                            solution.getCityIndexInOrder(city_i),
-                            city_j.getIndex()));
-                }
-                if(solution.isIn(city_j)){
-                    potentialMoves.add(new InterMove(
-                            solution.getCityIndexInOrder(city_j),
-                            city_i.getIndex()));
-                }
+                double edgeValue = city_j.getCost() + getProblem().getCostBetween(city_i,city_j);
 
+                potentialMoves.add(new CandidateEdgeMove(i,j,edgeValue,movesType));
             }
-            potentialMoves.sort(Comparator.comparingDouble((LocalMove move) -> calculateMoveCost(solution, move)));
+            potentialMoves.sort(Comparator.comparingDouble(CandidateEdgeMove::getMoveValue));
             if (potentialMoves.size() > numberOfCandidateMoves) {
                 potentialMoves = potentialMoves.subList(0, numberOfCandidateMoves);
             }
@@ -67,40 +56,14 @@ public class CandidateSearch extends LocalSearch{
     }
 
     @Override
-    public Solution solve(int startingCityIndex){
-        Solution solution = initialSolver.solve(startingCityIndex);
-        solution.calculateCityLocations();
-        solution.calculateInSolutions();
-        List<LocalMove> moves = getMoves(solution);
-
-        boolean improvement;
-        double prevobj = Double.POSITIVE_INFINITY;
-        iterations = 0;
-        do{
-            improvement = false;
-            double bestCost = Double.POSITIVE_INFINITY;
-            LocalMove bestMove = null;
-
-
-            for(LocalMove move: moves){
-                double moveCost = calculateMoveCost(solution,move);
-
-                if (moveCost >= 0){ //ignore non improving cost
-                    continue;
-                }
-                improvement = true;
-                if(moveCost < bestCost){ //steepest
-                    bestCost = moveCost;
-                    bestMove = move;
-                }
+    public List<LocalMove> getMoves(Solution solution) {
+        List<LocalMove> localMoves = new ArrayList<>(getProblem().getNumberOfCities()*getProblem().getSolutionLength());
+        for(CandidateEdgeMove candidateEdgeMove: candidateMoves){
+            LocalMove move = solution.determineMove(candidateEdgeMove);
+            if(move != null) {
+                localMoves.add(move);
             }
-
-            if(bestMove != null){
-                solution.performMove(bestMove);
-            }
-            iterations++;
-        }while(improvement);
-
-        return solution;
+        }
+        return localMoves;
     }
 }

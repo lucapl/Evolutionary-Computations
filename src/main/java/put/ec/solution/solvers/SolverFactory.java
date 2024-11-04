@@ -55,14 +55,10 @@ public class SolverFactory {
                     new LocalSearch(problem, "random", LocalSearchType.Steepest, IntraMovesType.Edges);
             case "localSearchGreedyEdgesRandom" ->
                     new LocalSearch(problem, "random", LocalSearchType.Greedy, IntraMovesType.Edges);
-            case "candidateSearchSteepestNodesRandom" ->
-                    new CandidateSearch(problem, "random", LocalSearchType.Steepest, IntraMovesType.Nodes, numberOfCandidateMoves);
-            case "candidateSearchGreedyNodesRandom" ->
-                    new CandidateSearch(problem, "random", LocalSearchType.Greedy, IntraMovesType.Nodes, numberOfCandidateMoves);
-            case "candidateSearchSteepestEdgesRandom" ->
-                    new CandidateSearch(problem, "random", LocalSearchType.Steepest, IntraMovesType.Edges, numberOfCandidateMoves);
-            case "candidateSearchGreedyEdgesRandom" ->
-                    new CandidateSearch(problem, "random", LocalSearchType.Greedy, IntraMovesType.Edges, numberOfCandidateMoves);
+            case "candidateSearchNodesRandom" ->
+                    new CandidateSearch(problem, "random", IntraMovesType.Nodes, numberOfCandidateMoves);
+            case "candidateSearchEdgesRandom" ->
+                    new CandidateSearch(problem, "random", IntraMovesType.Edges, numberOfCandidateMoves);
             default ->
 
                 // TODO: make the upper code nice

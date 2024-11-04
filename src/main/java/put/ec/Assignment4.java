@@ -8,7 +8,7 @@ public class Assignment4 extends Experiment {
         InstanceLoader il = new InstanceLoader();
 
         TravellingSalesmanProblem[] instances = {il.load("instances/TSPA.csv","A"),il.load("instances/TSPB.csv","B")};
-        String[] solvers = new String[4];
+        String[] solvers = new String[2];
 
         combineSolverNames(solvers);
 
@@ -19,14 +19,11 @@ public class Assignment4 extends Experiment {
 
     private static void combineSolverNames(String[] solvers){
         String solverName = "candidateSearch";
-        String[] solverTypes = {"Greedy", "Steepest"};
         String[] intraTypes = {"Nodes", "Edges"};
         int i = 0;
-        for(String solverType: solverTypes){
-            for(String intraType: intraTypes){
-                solvers[i] = solverName + solverType + intraType + "Random";
-                i++;
-            }
+        for(String intraType: intraTypes){
+            solvers[i] = solverName + intraType + "Random";
+            i++;
         }
     }
 }
