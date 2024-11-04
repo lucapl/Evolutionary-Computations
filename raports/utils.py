@@ -2,6 +2,7 @@ import json
 import os
 import pandas as pd
 from IPython.core.display import display, HTML
+from io import StringIO  
 
 def load_json_files_from_folder(folder_path):
     json_data = []
@@ -30,16 +31,16 @@ def find_solver_type_and_instance(type, data, instance):
     return [entry for entry in data if entry.get('solverType') == type if entry.get('instance') == instance]
 
 
-def find_min(data):
-    return min((entry for entry in data if 'objective function' in entry), key=lambda x: x['objective function'])
+def find_min(data,column_name='objective function'):
+    return min((entry for entry in data if column_name in entry), key=lambda x: x[column_name])
 
 
-def find_max(data):
-    return max((entry for entry in data if 'objective function' in entry), key=lambda x: x['objective function'])
+def find_max(data,column_name='objective function'):
+    return max((entry for entry in data if column_name in entry), key=lambda x: x[column_name])
 
 
-def average_cost(data):
-    objective_values = [entry['objective function'] for entry in data if 'objective function' in entry]
+def average_cost(data,column_name='objective function'):
+    objective_values = [entry[column_name] for entry in data if column_name in entry]
 
     return sum(objective_values) / len(objective_values) if objective_values else 0
 
@@ -58,22 +59,22 @@ def get_best_solutions_and_table(solver_types,instances,all_json_data):
     return table, best_solutions
 
 
-def process_solver_data_2(solver_type, all_json_data, instance):
+def process_solver_data_2(solver_type, all_json_data, instance,column_name='objective function'):
     data = find_solver_type_and_instance(solver_type, all_json_data, instance)
 
-    avg = average_cost(data)
-    max_ = find_max(data).get('objective function')
-    min_ = find_min(data).get('objective function')
+    avg = round(average_cost(data, column_name),1)
+    max_ = round(find_max(data, column_name).get(column_name),1)
+    min_ = round(find_min(data, column_name).get(column_name),1)
     return find_min(data), avg, max_, min_
 
 
-def get_best_solutions_and_vertical_table(solver_types,instances,all_json_data):
+def get_best_solutions_and_vertical_table(solver_types,instances,all_json_data,column_name='objective function'):
     best_solutions = {}
     table = pd.DataFrame(columns=["Method", "Instance A", "Instance B"])
     for solver in solver_types:
         row_data = {"Method": solver}
         for instance in instances:
-            best_solutions[f'{solver}_{instance}'], avg, max_, min_ = process_solver_data_2(solver, all_json_data, instance)
+            best_solutions[f'{solver}_{instance}'], avg, max_, min_ = process_solver_data_2(solver, all_json_data, instance,column_name)
             row_data[f"Instance {instance}"] = f"{avg} ({min_}-{max_})"
         table = pd.concat([table, pd.DataFrame([row_data])], ignore_index=True)
 
@@ -93,7 +94,9 @@ def print_solutions(solver_types,instances,best_solutions):
                 \tSolution:\n{best_solution.get('cityOrder')}
                 \tSolution length: {len(best_solution.get('cityOrder'))}
                 \tNo repeats?: {len(best_solution.get('cityOrder')) == len(set(best_solution.get('cityOrder')))}
-                \tStarting from: {best_solution.get("starting city")}""", end="")
+                \tStarting from: {best_solution.get("starting city")}
+                \tElapsed Time: {best_solution.get("elapsed time")}
+""", end="")
             if "iterations" in best_solution: print(f"""
                 \tIterations: {best_solution.get("iterations")}
                   """)
@@ -103,3 +106,8 @@ def display_html(table,index=True):
     html_table = table.to_html(index=index)
 
     display(HTML(html_table))
+
+
+def read_html(string):
+    df = pd.read_html(StringIO(string))
+    return df[0]
