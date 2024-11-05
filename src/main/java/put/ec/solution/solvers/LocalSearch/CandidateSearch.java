@@ -59,10 +59,7 @@ public class CandidateSearch extends LocalSearch{
     public List<LocalMove> getMoves(Solution solution) {
         List<LocalMove> localMoves = new ArrayList<>(getProblem().getNumberOfCities()*getProblem().getSolutionLength());
         for(CandidateEdgeMove candidateEdgeMove: candidateMoves){
-            LocalMove move = solution.determineMove(candidateEdgeMove);
-            if(move != null) {
-                localMoves.add(move);
-            }
+            solution.determineMove(candidateEdgeMove,localMoves);
         }
         return localMoves;
     }

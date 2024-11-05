@@ -232,31 +232,43 @@ public class Solution {
         }
     }
 
-    public LocalMove determineMove(CandidateEdgeMove move){
+    public void determineMove(CandidateEdgeMove move, List<LocalMove> moves){
         City city_1 = getProblem().getCity(move.getIndex1());
         City city_2 = getProblem().getCity(move.getIndex2());
 
         if(isIn(city_1) && isIn(city_2)){
             int city1Index = getCityIndexInOrder(city_1);
             if(move.getType() == IntraMovesType.Nodes){
+                moves.add(new IntraMove(
+                        loopIndex(city1Index-1),
+                        getCityIndexInOrder(city_2),
+                        move.getType()));
                 city1Index = loopIndex(city1Index+1);
             }
-            return new IntraMove(
+            moves.add(new IntraMove(
                     city1Index,
                     getCityIndexInOrder(city_2),
-                    move.getType());
+                    move.getType()));
+            return;
         }
+        City inCity = null;
+        City outCity = null;
         if(isIn(city_1)){
-            return new InterMove(
-                    loopIndex(getCityIndexInOrder(city_1)+1),
-                    city_2.getIndex());
+            inCity = city_1;
+            outCity = city_2;
         }
         if(isIn(city_2)){
-            return new InterMove(
-                    loopIndex(getCityIndexInOrder(city_2)+1),
-                    city_1.getIndex());
+            inCity = city_2;
+            outCity = city_1;
         }
 
-        return null;
+        if(inCity != null){
+            moves.add(new InterMove(
+                    loopIndex(getCityIndexInOrder(inCity)+1),
+                    outCity.getIndex()));
+            moves.add(new InterMove(
+                    loopIndex(getCityIndexInOrder(inCity)-1),
+                    outCity.getIndex()));
+        }
     }
 }
