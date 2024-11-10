@@ -5,53 +5,109 @@ import org.json.simple.JSONObject;
 import put.ec.problem.City;
 import put.ec.problem.TravellingSalesmanProblem;
 import put.ec.solution.solvers.Solver;
+import put.ec.utils.StatKeeper;
 import put.ec.utils.TimeMeasure;
 
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 
 public class SolutionWriter {
+    private JSONObject solutionsInfo;
+    private String instanceName;
+    private String solverName;
+    private List<JSONObject> instanceSolutions; // Store solutions for a specific instance
+    private StatKeeper timeStat;
+    private StatKeeper objectiveFunctionStat;
 
-    public void writeSolution(Solution solution, Solver solver, TimeMeasure timeMeasure, TravellingSalesmanProblem problemInstance, String outFolder){
+    public SolutionWriter() {
+        this.solutionsInfo = new JSONObject();
+        this.solutionsInfo.put("solutions", new JSONObject());
+        this.instanceSolutions = new ArrayList<>();
+        timeStat = new StatKeeper("time");
+        objectiveFunctionStat = new StatKeeper("objective function");
+    }
+
+    public void newInstance(String instanceName) {
+        this.instanceName = instanceName;
+        this.instanceSolutions.clear();
+        timeStat.clear();
+        objectiveFunctionStat.clear();
+    }
+
+    public void writeSolution(Solution solution, Solver solver, TimeMeasure timeMeasure, TravellingSalesmanProblem problemInstance) {
+        solverName = solver.getName();
+        int startingCity = solution.getStartingCityIndex();
+        String instanceName = problemInstance.getName();
+
+        double elapsedTime = timeMeasure.getElapsedTime(-6);
+
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("solverType", solverName);
+        jsonObject.put("instance", instanceName);
+        jsonObject.put("cost", solution.getSolutionCost());
+        jsonObject.put("edge length", solution.getEdgeLength());
+        jsonObject.put("objective function", solution.getObjectiveFunctionValue());
+        jsonObject.put("starting city", startingCity);
+        jsonObject.put("elapsed time", elapsedTime); // Time in nanoseconds
+
+        if (solver.iterations >= 0) {
+            jsonObject.put("iterations", solver.iterations);
+        }
+
+        JSONArray cityOrder = new JSONArray();
+        for (City city : solution.getCityOrder()) {
+            cityOrder.add(city.getIndex());
+        }
+        jsonObject.put("cityOrder", cityOrder);
+
+        // Update min and max objective function values
+        double objectiveValue = solution.getObjectiveFunctionValue();
+        objectiveFunctionStat.add(objectiveValue);
+        timeStat.add(elapsedTime);
+
+        // Add solution to the list for this instance
+        instanceSolutions.add(jsonObject);
+    }
+
+    public void saveInstanceSolutions() {
+        if (instanceName == null || instanceName.isEmpty()) {
+            System.err.println("SolutionWriter: Instance name is not set.");
+            return;
+        }
+
+        JSONObject instanceInfo = new JSONObject();
+        JSONArray solutionsArray = new JSONArray();
+        solutionsArray.addAll(instanceSolutions);
+
+        instanceInfo.put("solutions", solutionsArray);
+        instanceInfo.put(timeStat.getName(),timeStat.toJSONObject());
+        instanceInfo.put(objectiveFunctionStat.getName(),objectiveFunctionStat.toJSONObject());
+
+        // Add to the main solutions info
+        JSONObject mainSolutions = (JSONObject) solutionsInfo.get("solutions");
+        mainSolutions.put(instanceName, instanceInfo);
+        System.out.println(solverName+" for " + instanceName + " done; "+objectiveFunctionStat+" "+timeStat);
+    }
+
+    public void saveSolutionInfo(String outFolder) {
         try {
             Files.createDirectories(Paths.get(outFolder));
-        } catch (IOException e){
+        } catch (IOException e) {
             System.err.println("SolutionWriter: Could not create the directory:");
             e.printStackTrace();
         }
 
-        String solverName = solver.getName();
-        int startingCity = solution.getStartingCityIndex();
-        String instanceName = problemInstance.getName();
-        String fileName = problemInstance.getName()+"_"+startingCity+"_"+solverName;
-        JSONObject jsonObject = new JSONObject();
+        String fileName = outFolder + solverName + ".json";
 
-        jsonObject.put("solverType",solverName);
-        jsonObject.put("instance",instanceName);
-        jsonObject.put("cost",solution.getSolutionCost());
-        jsonObject.put("edge length",solution.getEdgeLength());
-        jsonObject.put("objective function",solution.getObjectiveFunctionValue());
-        jsonObject.put("starting city", solution.getStartingCityIndex());
-        jsonObject.put("elapsed time", timeMeasure.getElapsedTime(-6));//the default is is nanoseconds
-        if(solver.iterations >= 0){
-            jsonObject.put("iterations", solver.iterations);
-        }
-
-        JSONArray jsonArray = new JSONArray();
-        for(City city: solution.getCityOrder()){
-            jsonArray.add(city.getIndex());
-        }
-        jsonObject.put("cityOrder",jsonArray);
-
-        try {
-            FileWriter file = new FileWriter(outFolder+fileName+".json");
-            file.write(jsonObject.toJSONString());
-            file.close();
+        try (FileWriter file = new FileWriter(fileName)) {
+            file.write(solutionsInfo.toJSONString());
         } catch (IOException e) {
             e.printStackTrace();
         }
-        System.out.println("JSON file created: "+jsonObject);
+        System.out.println("JSON file created: " + fileName);
     }
 }
