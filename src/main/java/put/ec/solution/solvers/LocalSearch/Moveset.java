@@ -33,23 +33,15 @@ public class Moveset implements Iterable<LocalMove>{
                 City city_j = problem.getCity(j);
 
                 if(solution.isIn(city_i) && solution.isIn(city_j)){
-                    moves.add(new IntraMove(
-                            solution.getCityIndexInOrder(city_i),
-                            solution.getCityIndexInOrder(city_j),
-                            this.movesType));
+                    moves.add(new IntraMove(city_i, city_j, solution, this.movesType));
                     continue;
                 }
                 if(solution.isIn(city_i)){
-                    moves.add(new InterMove(
-                            solution.getCityIndexInOrder(city_i),
-                            city_i.getIndex(),
-                            city_j.getIndex()));
+                    moves.add(new InterMove(city_i, city_j, solution));
+                    continue;
                 }
                 if(solution.isIn(city_j)){
-                    moves.add(new InterMove(
-                            solution.getCityIndexInOrder(city_j),
-                            city_j.getIndex(),
-                            city_i.getIndex()));
+                    moves.add(new InterMove(city_j, city_i, solution));
                 }
             }
         }

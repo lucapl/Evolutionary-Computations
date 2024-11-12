@@ -1,8 +1,11 @@
 package put.ec.solution.solvers.LocalSearch;
 
+import put.ec.problem.City;
+import put.ec.solution.Solution;
+
 public class InterMove extends LocalMove{
-    public InterMove(int inSolutionIndex,int globalIndex){
-        super(inSolutionIndex,globalIndex);
+    public InterMove(City cityInside, City cityOutside, Solution solution){
+        super(solution.getCityIndexInOrder(cityInside),cityOutside.getIndex());
     }
 
     public int getInsideCityIndex() {

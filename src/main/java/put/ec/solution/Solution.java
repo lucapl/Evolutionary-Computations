@@ -129,6 +129,18 @@ public class Solution {
         return cityLocations.get(city.getIndex());
     }
 
+    public City getNeighbour(City city, int k){
+        return getCity(getCityIndexInOrder(city)+k);
+    }
+
+    public City getNext(City city){
+        return getNeighbour(city,1);
+    }
+
+    public City getPrevious(City city){
+        return getNeighbour(city,-1);
+    }
+
     public boolean isIn(City city){
         return this.inSolution.get(city.getIndex());
     }
@@ -237,18 +249,10 @@ public class Solution {
         City city_2 = getProblem().getCity(move.getIndex2());
 
         if(isIn(city_1) && isIn(city_2)){
-            int city1Index = getCityIndexInOrder(city_1);
             if(move.getType() == IntraMovesType.Nodes){
-                moves.add(new IntraMove(
-                        loopIndex(city1Index-1),
-                        getCityIndexInOrder(city_2),
-                        move.getType()));
-                city1Index = loopIndex(city1Index+1);
+                moves.add(new IntraMove(getPrevious(city_1), city_2,this,move.getType()));
             }
-            moves.add(new IntraMove(
-                    city1Index,
-                    getCityIndexInOrder(city_2),
-                    move.getType()));
+            moves.add(new IntraMove(move.getType() == IntraMovesType.Nodes?getNext(city_1):city_1, city_2, this, move.getType()));
             return;
         }
         City inCity = null;
@@ -263,12 +267,8 @@ public class Solution {
         }
 
         if(inCity != null){
-            moves.add(new InterMove(
-                    loopIndex(getCityIndexInOrder(inCity)+1),
-                    outCity.getIndex()));
-            moves.add(new InterMove(
-                    loopIndex(getCityIndexInOrder(inCity)-1),
-                    outCity.getIndex()));
+            moves.add(new InterMove(getNext(inCity), outCity, this));
+            moves.add(new InterMove(getPrevious(inCity), outCity, this));
         }
     }
 }
