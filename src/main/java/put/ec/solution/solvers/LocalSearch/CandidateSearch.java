@@ -55,12 +55,14 @@ public class CandidateSearch extends LocalSearch{
         return moves;
     }
 
-    @Override
-    public List<LocalMove> getMoves(Solution solution) {
-        List<LocalMove> localMoves = new ArrayList<>(getProblem().getNumberOfCities()*getProblem().getSolutionLength());
-        for(CandidateEdgeMove candidateEdgeMove: candidateMoves){
-            solution.determineMove(candidateEdgeMove,localMoves);
-        }
-        return localMoves;
-    }
+// TODO: transform the search into a moveset; add it as a moveset to local search
+
+//    @Override
+//    public List<LocalMove> getMoves(Solution solution) {
+//        List<LocalMove> localMoves = new ArrayList<>(getProblem().getNumberOfCities()*getProblem().getSolutionLength());
+//        for(CandidateEdgeMove candidateEdgeMove: candidateMoves){
+//            solution.determineMove(candidateEdgeMove,localMoves);
+//        }
+//        return localMoves;
+//    }
 }

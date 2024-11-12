@@ -42,6 +42,7 @@ public class LocalSearch extends Solver {
     @Override
     public Solution solve(int startingCityIndex) {
         Solution solution = initialSolver.solve(startingCityIndex);
+        Moveset moveset = new Moveset(solution,this.movesType,type == LocalSearchType.Greedy);
         solution.calculateCityLocations();
         solution.calculateInSolutions();
 
@@ -55,13 +56,8 @@ public class LocalSearch extends Solver {
             improvement = false;
             double bestCost = Double.POSITIVE_INFINITY;
             LocalMove bestMove = null;
-            List<LocalMove> moves = getMoves(solution); // get all possible moves
 
-            if(type == LocalSearchType.Greedy){ // shuffle them if greedy
-                Collections.shuffle(moves); //this is Fisher-Yates shuffle
-            }
-
-            for(LocalMove move: moves){
+            for(LocalMove move: moveset){
                 double moveCost = calculateMoveCost(solution,move);
 
                 if (moveCost >= 0){ //ignore non improving cost
@@ -81,6 +77,8 @@ public class LocalSearch extends Solver {
 
             if(bestMove != null){
                 solution.performMove(bestMove);
+                // some movesets may use this info
+                moveset.setPerformedMove(bestMove);
 
                 if(validate){
                     double curobj = solution.getObjectiveFunctionValue();
@@ -188,39 +186,5 @@ public class LocalSearch extends Solver {
         cost += getProblem().getCostBetween(city1,city2);
 
         return cost;
-    }
-
-
-    public List<LocalMove> getMoves(Solution solution){
-        // this is probably the bottleneck
-        int n = getProblem().getNumberOfCities();
-        List<LocalMove> moves = new ArrayList<>(getProblem().getNumberOfCities()*getProblem().getSolutionLength()); // max capacity
-
-        for(int i = 0; i<n; i++){
-            City city_i = getProblem().getCity(i);
-            for(int j = i+1; j<n; j++){
-                City city_j = getProblem().getCity(j);
-
-                if(solution.isIn(city_i) && solution.isIn(city_j)){
-                    moves.add(new IntraMove(
-                            solution.getCityIndexInOrder(city_i),
-                            solution.getCityIndexInOrder(city_j),
-                            this.movesType));
-                    continue;
-                }
-                if(solution.isIn(city_i)){
-                    moves.add(new InterMove(
-                            solution.getCityIndexInOrder(city_i),
-                            city_j.getIndex()));
-                }
-                if(solution.isIn(city_j)){
-                    moves.add(new InterMove(
-                            solution.getCityIndexInOrder(city_j),
-                            city_i.getIndex()));
-                }
-            }
-        }
-
-        return moves;
     }
 }
