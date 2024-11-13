@@ -145,6 +145,27 @@ public class Solution {
         return this.inSolution.get(city.getIndex());
     }
 
+    public EdgeState isEdgeIn(City[] edge){
+        City city1 = edge[0];
+        City city2 = edge[1];
+
+        if(!isIn(city1) || !isIn(city2)){
+            return EdgeState.NotFound;
+        }
+
+        City nextCity = getNext(city1);
+        if(nextCity == city2){
+            return EdgeState.CorrectDirection;
+        }
+
+        City prevCity = getPrevious(city1);
+        if(prevCity == city2){
+            return EdgeState.InvertedDirection;
+        }
+
+        return EdgeState.NotFound;
+    }
+
     public City getCity(int index){
         return this.cityOrder.get(loopIndex(index));
     }
