@@ -1,8 +1,8 @@
 package put.ec.solution;
 
+import put.ec.moves.*;
 import put.ec.problem.City;
 import put.ec.problem.TravellingSalesmanProblem;
-import put.ec.solution.solvers.LocalSearch.*;
 
 import java.util.ArrayList;
 import java.util.Collections;

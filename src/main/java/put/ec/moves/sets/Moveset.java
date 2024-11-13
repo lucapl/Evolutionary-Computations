@@ -1,11 +1,14 @@
-package put.ec.solution.solvers.LocalSearch;
+package put.ec.moves.sets;
 
+import put.ec.moves.InterMove;
+import put.ec.moves.IntraMove;
+import put.ec.moves.IntraMovesType;
+import put.ec.moves.LocalMove;
 import put.ec.problem.City;
 import put.ec.problem.TravellingSalesmanProblem;
 import put.ec.solution.Solution;
 
 import java.util.*;
-import java.util.function.Consumer;
 
 public class Moveset implements Iterable<LocalMove>{
     protected List<LocalMove> moves;

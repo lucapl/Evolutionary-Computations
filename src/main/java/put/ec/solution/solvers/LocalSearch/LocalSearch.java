@@ -1,5 +1,7 @@
 package put.ec.solution.solvers.LocalSearch;
 
+import put.ec.moves.*;
+import put.ec.moves.sets.Moveset;
 import put.ec.problem.City;
 import put.ec.problem.TravellingSalesmanProblem;
 import put.ec.solution.Solution;

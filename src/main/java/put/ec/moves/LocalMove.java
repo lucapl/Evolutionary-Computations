@@ -1,4 +1,4 @@
-package put.ec.solution.solvers.LocalSearch;
+package put.ec.moves;
 
 abstract public class LocalMove {
     private int index1;

@@ -1,6 +1,6 @@
-package put.ec.solution.solvers.LocalSearch;
+package put.ec.moves;
 
-public class CandidateEdgeMove extends LocalMove{
+public class CandidateEdgeMove extends LocalMove {
     private final double moveValue;
     private final IntraMovesType type;
 

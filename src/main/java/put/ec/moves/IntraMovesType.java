@@ -1,4 +1,4 @@
-package put.ec.solution.solvers.LocalSearch;
+package put.ec.moves;
 
 public enum IntraMovesType {
     Nodes,

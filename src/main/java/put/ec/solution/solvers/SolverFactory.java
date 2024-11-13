@@ -3,7 +3,7 @@ package put.ec.solution.solvers;
 import put.ec.problem.TravellingSalesmanProblem;
 import put.ec.solution.solvers.Heuristics.*;
 import put.ec.solution.solvers.LocalSearch.CandidateSearch;
-import put.ec.solution.solvers.LocalSearch.IntraMovesType;
+import put.ec.moves.IntraMovesType;
 import put.ec.solution.solvers.LocalSearch.LocalSearch;
 import put.ec.solution.solvers.LocalSearch.LocalSearchType;
 
