@@ -5,6 +5,7 @@ import put.ec.problem.TravellingSalesmanProblem;
 import put.ec.solution.Solution;
 import put.ec.solution.SolutionWriter;
 import put.ec.solution.solvers.*;
+import put.ec.utils.LoadingBar;
 import put.ec.utils.TimeMeasure;
 
 abstract public class Experiment {
@@ -18,7 +19,9 @@ abstract public class Experiment {
                 Solver solver = solverFactory.createSolver(solverName, problemInstance);
                 solutionWriter.newInstance(problemInstance.getName());
 
+                LoadingBar loadingBar = new LoadingBar(problemInstance.getNumberOfCities(),problemInstance.getName());
                 for (int startingCity = 0; startingCity < problemInstance.getNumberOfCities(); startingCity++) {
+                    loadingBar.progress(startingCity);
                     timeMeasure.start();
                     Solution solution = solver.solve(startingCity);
                     timeMeasure.stop();
