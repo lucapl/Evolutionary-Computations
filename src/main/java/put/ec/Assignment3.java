@@ -2,6 +2,7 @@ package put.ec;
 
 import put.ec.instance.InstanceLoader;
 import put.ec.problem.TravellingSalesmanProblem;
+import put.ec.solution.solvers.Solver;
 
 import java.util.Arrays;
 
@@ -28,7 +29,7 @@ public class Assignment3 extends Experiment{
         for(String solverType: solverTypes){
             for(String intraType: intraTypes){
                 for(String startType: startTypes){
-                    solvers[i] = solverName + solverType + intraType + startType;
+                    solvers[i] = Solver.createName(solverName, solverType, intraType, startType);
                     i++;
                 }
             }

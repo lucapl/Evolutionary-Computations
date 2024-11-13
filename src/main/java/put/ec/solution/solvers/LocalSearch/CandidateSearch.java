@@ -11,22 +11,17 @@ import java.util.Comparator;
 import java.util.List;
 
 public class CandidateSearch extends LocalSearch{
-
-    private final IntraMovesType movesType;
-    private final HeuristicSolver initialSolver;
     private final int numberOfCandidateMoves;
     private final List<CandidateEdgeMove> candidateMoves;
 
     public CandidateSearch(TravellingSalesmanProblem problem, String heuristicName, IntraMovesType moveType, int numberOfCandidateMoves) {
         super(problem, heuristicName, LocalSearchType.Steepest, moveType);
-        this.movesType = moveType;
         this.numberOfCandidateMoves = numberOfCandidateMoves;
         SolverFactory solverFactory = new SolverFactory();
-        this.initialSolver = solverFactory.createHeuristicSolver(heuristicName,problem);
 
         candidateMoves = getCandidateMoves();
 
-        setName("candidateSearch"+moveType.name()+simplifyHeuristicName(heuristicName));
+        setName(createName("candidateSearch",getType().name(),moveType.name(),simplifyHeuristicName(heuristicName)));
     }
 
     public List<CandidateEdgeMove> getCandidateMoves(){
@@ -43,7 +38,7 @@ public class CandidateSearch extends LocalSearch{
 
                 double edgeValue = city_j.getCost() + getProblem().getCostBetween(city_i,city_j);
 
-                potentialMoves.add(new CandidateEdgeMove(i,j,edgeValue,movesType));
+                potentialMoves.add(new CandidateEdgeMove(i,j,edgeValue,getMovesType()));
             }
             potentialMoves.sort(Comparator.comparingDouble(CandidateEdgeMove::getMoveValue));
             if (potentialMoves.size() > numberOfCandidateMoves) {

@@ -7,10 +7,6 @@ import put.ec.solution.solvers.Heuristics.HeuristicSolver;
 import put.ec.solution.solvers.Solver;
 import put.ec.solution.solvers.SolverFactory;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 public class LocalSearch extends Solver {
     private final HeuristicSolver initialSolver;
     private final LocalSearchType type;
@@ -24,7 +20,7 @@ public class LocalSearch extends Solver {
         SolverFactory solverFactory = new SolverFactory();
         this.initialSolver = solverFactory.createHeuristicSolver(heuristicName,problem);
 
-        setName("localSearch"+type.name()+moveType.name()+simplifyHeuristicName(heuristicName));
+        setName(createName("localSearch",type.name(),moveType.name(),simplifyHeuristicName(heuristicName)));
     }
 
     protected String simplifyHeuristicName(String heuristicName){
@@ -42,7 +38,7 @@ public class LocalSearch extends Solver {
     @Override
     public Solution solve(int startingCityIndex) {
         Solution solution = initialSolver.solve(startingCityIndex);
-        Moveset moveset = new Moveset(solution,this.movesType,type == LocalSearchType.Greedy);
+        Moveset moveset = new Moveset(solution, this.getMovesType(), getType() == LocalSearchType.Greedy);
         solution.calculateCityLocations();
         solution.calculateInSolutions();
 
@@ -64,7 +60,7 @@ public class LocalSearch extends Solver {
                     continue;
                 }
                 improvement = true;
-                if(type==LocalSearchType.Greedy){ //finish if greedy
+                if(getType() ==LocalSearchType.Greedy){ //finish if greedy
                     bestCost = moveCost;
                     bestMove = move;
                     break;
@@ -186,5 +182,13 @@ public class LocalSearch extends Solver {
         cost += getProblem().getCostBetween(city1,city2);
 
         return cost;
+    }
+
+    public LocalSearchType getType() {
+        return type;
+    }
+
+    public IntraMovesType getMovesType() {
+        return movesType;
     }
 }

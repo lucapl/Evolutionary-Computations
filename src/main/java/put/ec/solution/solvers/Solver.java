@@ -7,6 +7,11 @@ import put.ec.solution.Solution;
 public abstract class Solver {
     private final TravellingSalesmanProblem problem;
     private String name;
+    public final static String separator = "-";
+
+    public static String createName(String... strings){
+        return String.join(separator,strings);
+    }
 
     public int iterations = -1;
 

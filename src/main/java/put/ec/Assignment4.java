@@ -2,6 +2,7 @@ package put.ec;
 
 import put.ec.instance.InstanceLoader;
 import put.ec.problem.TravellingSalesmanProblem;
+import put.ec.solution.solvers.Solver;
 
 public class Assignment4 extends Experiment {
     public static void main(String[] args) {
@@ -22,7 +23,7 @@ public class Assignment4 extends Experiment {
         String[] intraTypes = {"Nodes", "Edges"};
         int i = 0;
         for(String intraType: intraTypes){
-            solvers[i] = solverName + intraType + "Random";
+            solvers[i] = Solver.createName(solverName, intraType, "Random");
             i++;
         }
     }
