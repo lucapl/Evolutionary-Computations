@@ -56,9 +56,14 @@ public class LocalSearch extends Solver {
             LocalMove bestMove = null;
 
             for(LocalMove move: moveset){
-                double moveCost = calculateMoveCost(solution,move);
+                double moveCost = move.getMoveCost();
+                if(!move.isEvaluated()){
+                    moveCost = calculateMoveCost(solution,move);
+                    move.setMoveCost(moveCost);
+                    moveset.giveMoveEvaluation(move,moveCost);
+                }
 
-                if (moveCost >= 0){ //ignore non improving cost
+                if (moveCost >= 0 && move.getMoveState() == MoveState.NotApplicable){ //ignore non improving cost
                     continue;
                 }
                 improvement = true;

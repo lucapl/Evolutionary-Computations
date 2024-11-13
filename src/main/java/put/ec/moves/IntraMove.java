@@ -7,7 +7,7 @@ public class IntraMove extends LocalMove {
     private final IntraMovesType type;
 
     public IntraMove(City city1, City city2, Solution solution, IntraMovesType type){
-        super(solution.getCityIndexInOrder(city1), solution.getCityIndexInOrder(city2));
+        super(solution.getCityIndexInOrder(city1), solution.getCityIndexInOrder(city2),city1,city2);
         this.type = type;
     }
 

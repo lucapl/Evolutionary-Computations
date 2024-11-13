@@ -1,9 +1,6 @@
 package put.ec.moves.sets;
 
-import put.ec.moves.InterMove;
-import put.ec.moves.IntraMove;
-import put.ec.moves.IntraMovesType;
-import put.ec.moves.LocalMove;
+import put.ec.moves.*;
 import put.ec.problem.City;
 import put.ec.problem.TravellingSalesmanProblem;
 import put.ec.solution.Solution;
@@ -35,25 +32,34 @@ public class Moveset implements Iterable<LocalMove>{
             for(int j = i+1; j<n; j++){
                 City city_j = problem.getCity(j);
 
-                if(solution.isIn(city_i) && solution.isIn(city_j)){
-                    moves.add(new IntraMove(city_i, city_j, solution, this.movesType));
+                if(getSolution().isIn(city_i) && getSolution().isIn(city_j)){
+                    moves.add(createIntraMove(city_i,city_j, getSolution()));
                     continue;
                 }
-                if(solution.isIn(city_i)){
-                    moves.add(new InterMove(city_i, city_j, solution));
+                if(getSolution().isIn(city_i)){
+                    moves.add(new InterMove(city_i, city_j, getSolution()));
                     continue;
                 }
-                if(solution.isIn(city_j)){
-                    moves.add(new InterMove(city_j, city_i, solution));
+                if(getSolution().isIn(city_j)){
+                    moves.add(new InterMove(city_j, city_i, getSolution()));
                 }
             }
         }
 
         return moves;
     }
+    private IntraMove createIntraMove(City city1, City city2, Solution solution){
+        return switch (movesType){
+            case Edges -> new EdgeSwapMove(city1,city2,solution);
+            case Nodes -> new IntraMove(city1,city2,solution,movesType);
+        };
+    }
 
     public void setPerformedMove(LocalMove move){
         previousMove = move;
+    }
+    public void giveMoveEvaluation(LocalMove move, double evaluation){
+        return;
     }
 
     @Override
@@ -63,5 +69,9 @@ public class Moveset implements Iterable<LocalMove>{
             Collections.shuffle(moves); //this is Fisher-Yates shuffle
         }
         return moves.iterator();
+    }
+
+    public Solution getSolution() {
+        return solution;
     }
 }
