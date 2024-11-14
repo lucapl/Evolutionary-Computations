@@ -10,16 +10,23 @@ import java.util.*;
 public class Moveset implements Iterable<LocalMove>{
     protected List<LocalMove> moves;
     protected LocalMove previousMove = null;
-    private final Solution solution;
-    private final TravellingSalesmanProblem problem;
+    private Solution solution;
+    protected TravellingSalesmanProblem problem;
     private final IntraMovesType movesType;
     private final boolean shuffle;
 
     public Moveset(Solution solution, IntraMovesType movesType, boolean shuffle){
         this.solution = solution;
-        this.problem = solution.getProblem();
+        if(solution != null){
+            this.problem = solution.getProblem();
+        }
         this.movesType = movesType;
         this.shuffle = shuffle;
+        this.moves = new ArrayList<>();
+    }
+
+    public Moveset(IntraMovesType movesType, boolean shuffle){
+        this(null,movesType,shuffle);
     }
 
     public List<LocalMove> getMoves(){
@@ -31,23 +38,30 @@ public class Moveset implements Iterable<LocalMove>{
             City city_i = problem.getCity(i);
             for(int j = i+1; j<n; j++){
                 City city_j = problem.getCity(j);
-
-                if(getSolution().isIn(city_i) && getSolution().isIn(city_j)){
-                    moves.add(createIntraMove(city_i,city_j, getSolution()));
+                LocalMove move = createMove(city_i,city_j);
+                if(move == null){
                     continue;
                 }
-                if(getSolution().isIn(city_i)){
-                    moves.add(new InterMove(city_i, city_j, getSolution()));
-                    continue;
-                }
-                if(getSolution().isIn(city_j)){
-                    moves.add(new InterMove(city_j, city_i, getSolution()));
-                }
+                moves.add(move);
             }
         }
 
         return moves;
     }
+
+    public LocalMove createMove(City city_i, City city_j){
+        if(getSolution().isIn(city_i) && getSolution().isIn(city_j)){
+            return createIntraMove(city_i,city_j, getSolution());
+        }
+        if(getSolution().isIn(city_i)){
+            return new InterMove(city_i, city_j, getSolution());
+        }
+        if(getSolution().isIn(city_j)){
+            return new InterMove(city_j, city_i, getSolution());
+        }
+        return null;
+    }
+
     private IntraMove createIntraMove(City city1, City city2, Solution solution){
         return switch (movesType){
             case Edges -> new EdgeSwapMove(city1,city2,solution);
@@ -73,5 +87,17 @@ public class Moveset implements Iterable<LocalMove>{
 
     public Solution getSolution() {
         return solution;
+    }
+
+    public void setSolution(Solution solution){
+        this.solution = solution;
+        this.problem = solution.getProblem();
+    }
+
+    public void clear(){
+        moves.clear();
+        solution = null;
+        problem = null;
+        previousMove = null;
     }
 }

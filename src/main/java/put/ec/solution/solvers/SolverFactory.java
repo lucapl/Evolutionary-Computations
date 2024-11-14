@@ -1,13 +1,16 @@
 package put.ec.solution.solvers;
 
+import put.ec.moves.sets.OptimizedMoveset;
 import put.ec.problem.TravellingSalesmanProblem;
 import put.ec.solution.solvers.Heuristics.*;
 import put.ec.solution.solvers.LocalSearch.CandidateSearch;
 import put.ec.moves.IntraMovesType;
+import put.ec.solution.solvers.LocalSearch.LMSearch;
 import put.ec.solution.solvers.LocalSearch.LocalSearch;
 import put.ec.solution.solvers.LocalSearch.LocalSearchType;
 
 public class SolverFactory {
+    private final String bestHeuristic = "weightedRegretHeuristic";
     public HeuristicSolver createHeuristicSolver(String name, TravellingSalesmanProblem problem){
         switch (name) {
             case "random" -> {
@@ -33,55 +36,45 @@ public class SolverFactory {
         return null;
     }
 
-    private SolverData separateLocalSearchName(String name){
-        String bestHeuristic = "weightedRegretHeuristic";
+    private SolverData getSolverType(String name){
+        String[] names = name.split(Solver.separator);
+        SolverData solverData = new SolverData();
+        solverData.name = names[0];
+        return solverData;
+    }
 
+    private SolverData separateLocalSearchName(String name){
         String[] names = name.split(Solver.separator);
 
         return new SolverData(names[0],LocalSearchType.valueOf(names[1]),IntraMovesType.valueOf(names[2]),names[3].equals("Heuristic")?bestHeuristic:"random");
     }
 
-    public Solver createSolver(String name, TravellingSalesmanProblem problem){
-        int numberOfCandidateMoves = 10;
-        SolverData solverData = separateLocalSearchName(name);
+    private SolverData separateCandidateSearchName(String name){
+        String[] names = name.split(Solver.separator);
 
-        return switch(solverData.name){
-            case "localSearch" -> new LocalSearch(problem, solverData.initialHeuristic, solverData.searchType, solverData.movesType);
-            case "candidateSearch" -> new CandidateSearch(problem, solverData.initialHeuristic, solverData.movesType, numberOfCandidateMoves);
+        return new SolverData(names[0],LocalSearchType.Steepest,IntraMovesType.valueOf(names[1]),names[2].equals("Heuristic")?bestHeuristic:"random");
+    }
+
+    public Solver createSolver(String name, TravellingSalesmanProblem problem) {
+        int numberOfCandidateMoves = 10;
+        SolverData solverData = getSolverType(name);
+
+        return switch (solverData.name) {
+            case "localSearch" -> {
+                solverData = separateLocalSearchName(name);
+                yield new LocalSearch(problem, solverData.initialHeuristic, solverData.searchType, solverData.movesType);
+            }
+            case "candidateSearch" -> {
+                solverData = separateCandidateSearchName(name);
+                yield new CandidateSearch(problem, solverData.initialHeuristic, solverData.movesType, numberOfCandidateMoves);
+            }
+            case "lmSearch" -> new LMSearch(problem);
             default -> createHeuristicSolver(name, problem);
         };
-
-//        return switch (name) {
-//            case "localSearchSteepestNodesHeuristic" -> //not the most elegant, but does not affect anything
-//                    new LocalSearch(problem, bestHeuristic, LocalSearchType.Steepest, IntraMovesType.Nodes);
-//            case "localSearchGreedyNodesHeuristic" ->
-//                    new LocalSearch(problem, bestHeuristic, LocalSearchType.Greedy, IntraMovesType.Nodes);
-//            case "localSearchSteepestEdgesHeuristic" ->
-//                    new LocalSearch(problem, bestHeuristic, LocalSearchType.Steepest, IntraMovesType.Edges);
-//            case "localSearchGreedyEdgesHeuristic" ->
-//                    new LocalSearch(problem, bestHeuristic, LocalSearchType.Greedy, IntraMovesType.Edges);
-//            case "localSearchSteepestNodesRandom" ->
-//                    new LocalSearch(problem, "random", LocalSearchType.Steepest, IntraMovesType.Nodes);
-//            case "localSearchGreedyNodesRandom" ->
-//                    new LocalSearch(problem, "random", LocalSearchType.Greedy, IntraMovesType.Nodes);
-//            case "localSearchSteepestEdgesRandom" ->
-//                    new LocalSearch(problem, "random", LocalSearchType.Steepest, IntraMovesType.Edges);
-//            case "localSearchGreedyEdgesRandom" ->
-//                    new LocalSearch(problem, "random", LocalSearchType.Greedy, IntraMovesType.Edges);
-//            case "candidateSearchNodesRandom" ->
-//                    new CandidateSearch(problem, "random", IntraMovesType.Nodes, numberOfCandidateMoves);
-//            case "candidateSearchEdgesRandom" ->
-//                    new CandidateSearch(problem, "random", IntraMovesType.Edges, numberOfCandidateMoves);
-//            default ->
-//
-//                // TODO: make the upper code nice
-//
-//                    createHeuristicSolver(name, problem);
-//        };
-
     }
 }
 
+// TODO make this the default way to create solvers instead of strings
 class SolverData{
     public String name;
     public LocalSearchType searchType;
@@ -93,5 +86,7 @@ class SolverData{
         this.searchType = searchType;
         this.movesType = movesType;
         this.initialHeuristic = initialHeuristic;
+    }
+    public SolverData(){
     }
 }

@@ -241,11 +241,13 @@ public class Solution {
     }
 
     private void performIntraNodeSwap(IntraMove move){
-        City city1 = getCity(move.getIndex1());
-        City city2 = getCity(move.getIndex2());
+        int index1 = move.getIndex1();
+        int index2 = move.getIndex2();
+        City city1 = getCity(index1);
+        City city2 = getCity(index2);
 
-        setCityAt(move.getIndex1(),city2);
-        setCityAt(move.getIndex2(),city1);
+        setCityAt(index1,city2);
+        setCityAt(index2,city1);
     }
 
     private void performIntraEdgeSwap(IntraMove move){

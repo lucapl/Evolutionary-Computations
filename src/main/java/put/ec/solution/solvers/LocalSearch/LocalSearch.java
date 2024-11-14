@@ -13,14 +13,23 @@ public class LocalSearch extends Solver {
     private final HeuristicSolver initialSolver;
     private final LocalSearchType type;
     private final IntraMovesType movesType;
-    private boolean validate = true;
+    private final Moveset moveset;
+    private boolean validate = false;
 
     public LocalSearch(TravellingSalesmanProblem problem, String heuristicName, LocalSearchType type, IntraMovesType moveType){
+        this(problem,heuristicName,type,moveType,new Moveset(moveType,type==LocalSearchType.Greedy));
+    }
+
+    public LocalSearch(TravellingSalesmanProblem problem, String heuristicName, LocalSearchType type, IntraMovesType moveType, Moveset moveset){
         super(problem);
         this.type = type;
         this.movesType = moveType;
-        SolverFactory solverFactory = new SolverFactory();
-        this.initialSolver = solverFactory.createHeuristicSolver(heuristicName,problem);
+        this.initialSolver = new SolverFactory().createHeuristicSolver(heuristicName,problem);
+        this.moveset = moveset;
+
+        if(validate){
+            System.out.println("Validation is on for LocalSearch, turn off for efficiency");
+        }
 
         setName(createName("localSearch",type.name(),moveType.name(),simplifyHeuristicName(heuristicName)));
     }
@@ -34,13 +43,14 @@ public class LocalSearch extends Solver {
 
     @Override
     public Solution solve() {
-        return null;
+        throw new RuntimeException("not implemented");
     }
 
     @Override
     public Solution solve(int startingCityIndex) {
         Solution solution = initialSolver.solve(startingCityIndex);
-        Moveset moveset = new Moveset(solution, this.getMovesType(), getType() == LocalSearchType.Greedy);
+        moveset.clear();
+        moveset.setSolution(solution);
         solution.calculateCityLocations();
         solution.calculateInSolutions();
 
@@ -63,7 +73,7 @@ public class LocalSearch extends Solver {
                     moveset.giveMoveEvaluation(move,moveCost);
                 }
 
-                if (moveCost >= 0 && move.getMoveState() == MoveState.NotApplicable){ //ignore non improving cost
+                if (moveCost >= 0 || move.getMoveState() == MoveState.NotApplicable){ //ignore non improving cost
                     continue;
                 }
                 improvement = true;
@@ -79,6 +89,9 @@ public class LocalSearch extends Solver {
             }
 
             if(bestMove != null){
+                if(validate){
+                    prevobj = solution.getObjectiveFunctionValue();
+                }
                 solution.performMove(bestMove);
                 // some movesets may use this info
                 moveset.setPerformedMove(bestMove);
@@ -87,9 +100,8 @@ public class LocalSearch extends Solver {
                     double curobj = solution.getObjectiveFunctionValue();
 
                     if (curobj-prevobj != bestCost){
-                        System.err.println("Change in cost not equal to expected! \nDifference: "+((curobj-prevobj)-bestCost));
+                        System.err.println("Change in cost not equal to expected! \nDifference: "+((curobj-prevobj)-bestCost) +"\n New cost: "+curobj);
                     }
-                    prevobj = curobj;
                 }
             }
             iterations++;
