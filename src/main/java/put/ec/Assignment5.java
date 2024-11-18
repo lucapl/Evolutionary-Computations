@@ -11,7 +11,7 @@ public class Assignment5 extends Experiment{
         TravellingSalesmanProblem[] instances = {il.load("instances/TSPA.csv","A"),il.load("instances/TSPB.csv","B")};
         String[] solvers = new String[]{ "lmSearch-Random"};
 
-        String outFolder = "./out/";
+        String outFolder = "./out5/";
 
         runExperiment(instances,solvers,outFolder);
     }
