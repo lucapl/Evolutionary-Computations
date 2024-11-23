@@ -1,13 +1,11 @@
 package put.ec.solution.solvers;
 
+import put.ec.moves.sets.Moveset;
 import put.ec.moves.sets.OptimizedMoveset;
 import put.ec.problem.TravellingSalesmanProblem;
 import put.ec.solution.solvers.Heuristics.*;
-import put.ec.solution.solvers.LocalSearch.CandidateSearch;
+import put.ec.solution.solvers.LocalSearch.*;
 import put.ec.moves.IntraMovesType;
-import put.ec.solution.solvers.LocalSearch.LMSearch;
-import put.ec.solution.solvers.LocalSearch.LocalSearch;
-import put.ec.solution.solvers.LocalSearch.LocalSearchType;
 
 public class SolverFactory {
     private final String bestHeuristic = "weightedRegretHeuristic";
@@ -67,6 +65,12 @@ public class SolverFactory {
             case "candidateSearch" -> {
                 solverData = separateCandidateSearchName(name);
                 yield new CandidateSearch(problem, solverData.initialHeuristic, solverData.movesType, numberOfCandidateMoves);
+            }
+            case "msls" -> {
+                yield new MultipleStartLocalSearch(problem, "random", new OptimizedMoveset(), 20);
+            }
+            case "ils" -> {
+                yield new IteratedLocalSearch(problem, "random", new OptimizedMoveset(), 20, 10);
             }
             case "lmSearch" -> new LMSearch(problem);
             default -> createHeuristicSolver(name, problem);

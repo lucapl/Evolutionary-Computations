@@ -100,4 +100,12 @@ public class Moveset implements Iterable<LocalMove>{
         problem = null;
         previousMove = null;
     }
+
+    public LocalMove getRandomMove(){
+        if (moves.isEmpty()) {
+            return null;
+        }
+        Random random = new Random();
+        return moves.get(random.nextInt(moves.size()));
+    }
 }
