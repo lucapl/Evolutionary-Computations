@@ -33,4 +33,27 @@ abstract public class Experiment {
             solutionWriter.saveSolutionInfo(outFolder);
         }
     }
+    public static void runExperimentCustomAmount(TravellingSalesmanProblem[] instances, String[] solvers,String outFolder, int maxRunAmount){
+        SolverFactory solverFactory = new SolverFactory();
+        TimeMeasure timeMeasure = new TimeMeasure();
+
+        for (String solverName : solvers) {
+            SolutionWriter solutionWriter = new SolutionWriter();
+            for (TravellingSalesmanProblem problemInstance : instances) {
+                Solver solver = solverFactory.createSolver(solverName, problemInstance);
+                solutionWriter.newInstance(problemInstance.getName());
+
+                for (int i = 0; i < maxRunAmount; i++) {
+                    System.out.println("Run nr" + i);
+                    timeMeasure.start();
+                    Solution solution = solver.solve(0);
+                    timeMeasure.stop();
+                    solution.setStartingCityIndex(0);
+                    solutionWriter.writeSolution(solution, solver, timeMeasure, problemInstance);
+                }
+                solutionWriter.saveInstanceSolutions();
+            }
+            solutionWriter.saveSolutionInfo(outFolder);
+        }
+    }
 }
