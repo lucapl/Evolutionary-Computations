@@ -111,3 +111,14 @@ def display_html(table,index=True):
 def read_html(string):
     df = pd.read_html(StringIO(string))
     return df[0]
+
+
+def load_all_json_data(solver_types, instances='AB', folder_path='../out'):
+    data = []
+    for solver in solver_types:
+        with open(f"{folder_path}/{solver}.json", "r") as file:
+            json_file = json.load(file)
+            for instance in instances:
+                data += json_file.get("solutions").get(instance).get("solutions")
+
+    return data
