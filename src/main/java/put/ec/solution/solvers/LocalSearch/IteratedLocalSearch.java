@@ -42,8 +42,11 @@ public class IteratedLocalSearch extends LocalSearch {
         long startTime = System.currentTimeMillis();
         long endTime = startTime + time;
 
+        int iterations = 0;
+
         // Iterated Local Search process
         while (System.currentTimeMillis() < endTime) {
+            iterations++;
             Solution y = perturb(bestSolution);
             y = localSearch(y);
 
@@ -55,6 +58,7 @@ public class IteratedLocalSearch extends LocalSearch {
                 x = y; // Update `x` to the new best solution
             }
         }
+        System.out.println(iterations);
 
         return bestSolution;
     }
@@ -139,13 +143,10 @@ public class IteratedLocalSearch extends LocalSearch {
 
         int numberOfCities = perturbedSolution.getProblem().getNumberOfCities();
 
-        // Step 3: Apply perturbation to the copied city order
         for (int i = 0; i < perturbationSize; i++) {
-            // Remove one random city from the current solution
             int removeIndex = rand.nextInt(cityOrder.size());
             cityOrder.remove(removeIndex);
 
-            // Add a city that is not currently in the solution
             City newCity;
             do {
                 int randomIndex = rand.nextInt(numberOfCities);
@@ -155,7 +156,6 @@ public class IteratedLocalSearch extends LocalSearch {
             cityOrder.add(newCity);
         }
 
-        // Step 4: Set the perturbed city order to the copied solution
         perturbedSolution.setCityOrder(cityOrder);
 
         return perturbedSolution;

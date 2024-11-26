@@ -15,6 +15,7 @@ public class MultipleStartLocalSearch extends LocalSearch {
     private final int startingPoints;
     private final Moveset moveset;
     private final HeuristicSolver initialSolver;
+    private final boolean validate = false;
 
     public MultipleStartLocalSearch(TravellingSalesmanProblem problem, String heuristicName, Moveset moveset, int startingPoints) {
         super(problem, defaultStart, LocalSearchType.Steepest, IntraMovesType.Edges, new OptimizedMoveset());
@@ -43,39 +44,73 @@ public class MultipleStartLocalSearch extends LocalSearch {
         return bestSolution;
     }
 
-    private Solution localSearch(Solution solution) {
+    public Solution localSearch(Solution solution) {
         moveset.clear();
         moveset.setSolution(solution);
         solution.calculateCityLocations();
         solution.calculateInSolutions();
 
-        for (int iteration = 0; iteration < 200; iteration++) {
+        boolean improvement;
+        double prevobj = Double.POSITIVE_INFINITY;
+        if (validate) {
+            prevobj = solution.getObjectiveFunctionValue();
+        }
+        iterations = 0;
+        double cost_past = solution.getObjectiveFunctionValue();
+        double new_cost = 0;
+        do{
+            improvement = false;
             double bestCost = Double.POSITIVE_INFINITY;
             LocalMove bestMove = null;
 
-            for (LocalMove move : moveset) {
+            for(LocalMove move: moveset){
                 double moveCost = move.getMoveCost();
-                if (!move.isEvaluated()) {
-                    moveCost = calculateMoveCost(solution, move);
+                if(!move.isEvaluated()){
+                    moveCost = calculateMoveCost(solution,move);
                     move.setMoveCost(moveCost);
-                    moveset.giveMoveEvaluation(move, moveCost);
+                    moveset.giveMoveEvaluation(move,moveCost);
                 }
 
-                if (moveCost >= 0 || move.getMoveState() == MoveState.NotApplicable) {
+                if (moveCost >= 0 || move.getMoveState() == MoveState.NotApplicable){ //ignore non improving cost
                     continue;
                 }
-
-                if (moveCost < bestCost) {
+                improvement = true;
+                if(getType() ==LocalSearchType.Greedy){ //finish if greedy
+                    bestCost = moveCost;
+                    bestMove = move;
+                    break;
+                }
+                if(moveCost < bestCost){ //steepest
                     bestCost = moveCost;
                     bestMove = move;
                 }
             }
 
-            if (bestMove != null) {
+            if(bestMove != null){
+                if(validate){
+                    prevobj = solution.getObjectiveFunctionValue();
+                }
                 solution.performMove(bestMove);
+                // some movesets may use this info
                 moveset.setPerformedMove(bestMove);
+
+                if(validate){
+                    double curobj = solution.getObjectiveFunctionValue();
+
+                    if (curobj-prevobj != bestCost){
+                        System.err.println("Change in cost not equal to expected! \nDifference: "+((curobj-prevobj)-bestCost) +"\n New cost: "+curobj);
+                    }
+                }
             }
-        }
+            iterations++;
+            new_cost = solution.getObjectiveFunctionValue();
+            if (new_cost == cost_past){
+                break;
+            }
+            else{
+                cost_past = new_cost;
+            }
+        }while(improvement);
 
         return solution;
     }
