@@ -72,6 +72,9 @@ public class SolverFactory {
             case "ils" -> {
                 yield new IteratedLocalSearch(problem, "random", new OptimizedMoveset(), 10000, 5);
             }
+            case "lns" -> {
+                yield new LargeNeighborhoodSearch(problem, "random", new OptimizedMoveset(), 20);
+            }
             case "lmSearch" -> new LMSearch(problem);
             default -> createHeuristicSolver(name, problem);
         };
