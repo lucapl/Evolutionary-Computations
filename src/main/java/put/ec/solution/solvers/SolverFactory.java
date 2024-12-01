@@ -73,7 +73,7 @@ public class SolverFactory {
                 yield new IteratedLocalSearch(problem, "random", new OptimizedMoveset(), 10000, 5);
             }
             case "lns" -> {
-                yield new LargeNeighborhoodSearch(problem, "random", new OptimizedMoveset(), 20);
+                yield new LargeNeighborhoodSearch(problem, "random", new OptimizedMoveset(), 1000);
             }
             case "lmSearch" -> new LMSearch(problem);
             default -> createHeuristicSolver(name, problem);
