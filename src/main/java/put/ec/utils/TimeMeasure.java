@@ -1,7 +1,7 @@
 package put.ec.utils;
 
 public class TimeMeasure {
-    private double elapsedTime;
+    private long elapsedTime;
     private long start;
     private long stop;
     private long maxTime;
@@ -19,14 +19,13 @@ public class TimeMeasure {
         stop = System.nanoTime();
     }
 
-    public double getElapsedTime(){
+    public long getElapsedTime(){
         elapsedTime = stop-start;
         return elapsedTime;
     }
 
     public double getElapsedTime(int scale){
-        elapsedTime = (double)(stop-start)* Math.pow(10,scale);
-        return elapsedTime;
+        return (double)getElapsedTime()* Math.pow(10,scale);
     }
 
     public boolean hasFinished(){

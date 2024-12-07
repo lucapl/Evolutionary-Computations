@@ -27,14 +27,14 @@ public class SolutionWriter {
         this.solutionsInfo = new JSONObject();
         this.solutionsInfo.put("solutions", new JSONObject());
         this.instanceSolutions = new ArrayList<>();
-        timeStat = new StatKeeper("time");
+        setTimeStat(new StatKeeper("time"));
         objectiveFunctionStat = new StatKeeper("objective function");
     }
 
     public void newInstance(String instanceName) {
         this.instanceName = instanceName;
         this.instanceSolutions.clear();
-        timeStat.clear();
+        getTimeStat().clear();
         objectiveFunctionStat.clear();
     }
 
@@ -67,7 +67,7 @@ public class SolutionWriter {
         // Update min and max objective function values
         double objectiveValue = solution.getObjectiveFunctionValue();
         objectiveFunctionStat.add(objectiveValue);
-        timeStat.add(elapsedTime);
+        getTimeStat().add(elapsedTime);
 
         // Add solution to the list for this instance
         instanceSolutions.add(jsonObject);
@@ -84,13 +84,13 @@ public class SolutionWriter {
         solutionsArray.addAll(instanceSolutions);
 
         instanceInfo.put("solutions", solutionsArray);
-        instanceInfo.put(timeStat.getName(),timeStat.toJSONObject());
+        instanceInfo.put(getTimeStat().getName(), getTimeStat().toJSONObject());
         instanceInfo.put(objectiveFunctionStat.getName(),objectiveFunctionStat.toJSONObject());
 
         // Add to the main solutions info
         JSONObject mainSolutions = (JSONObject) solutionsInfo.get("solutions");
         mainSolutions.put(instanceName, instanceInfo);
-        System.out.println(solverName+" for " + instanceName + " done; "+objectiveFunctionStat+" "+timeStat);
+        System.out.println(solverName+" for " + instanceName + " done; "+objectiveFunctionStat+" "+ getTimeStat());
     }
 
     public void saveSolutionInfo(String outFolder) {
@@ -109,5 +109,13 @@ public class SolutionWriter {
             e.printStackTrace();
         }
         System.out.println("JSON file created: " + fileName);
+    }
+
+    public StatKeeper getTimeStat() {
+        return timeStat;
+    }
+
+    public void setTimeStat(StatKeeper timeStat) {
+        this.timeStat = timeStat;
     }
 }

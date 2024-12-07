@@ -20,6 +20,8 @@ public class LMSearch extends LocalSearch {
     }
 
     public Solution solve(Solution solution){
+        solution.calculateInSolutions();
+        solution.calculateCityLocations();
         setSolution(solution);
         PriorityQueue<LocalMove> lmMoves = new PriorityQueue<>(new MoveComparator());
         Queue<LocalMove> newMoves = initializeMoves(solution);

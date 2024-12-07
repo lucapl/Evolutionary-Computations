@@ -7,6 +7,7 @@ import put.ec.solution.Solution;
 import put.ec.solution.solvers.Heuristics.HeuristicSolver;
 import put.ec.solution.solvers.Heuristics.WeightedRegretHeuristic;
 import put.ec.solution.solvers.SolverFactory;
+import put.ec.utils.TimeMeasure;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,46 +17,42 @@ public class LargeNeighborhoodSearch extends IteratedLocalSearch{
     private static final String defaultStart = "random";
     private final HeuristicSolver initialSolver;
     private final WeightedRegretHeuristic repairSolver;
-    private final int time;
+    private final boolean withLocalSearch;
 
-    public LargeNeighborhoodSearch(TravellingSalesmanProblem problem, String heuristicName, Moveset moveset, int time) {
+    public LargeNeighborhoodSearch(TravellingSalesmanProblem problem, String heuristicName, Moveset moveset, int time, boolean withLocalSearch) {
         super(problem, heuristicName, moveset, time, 200);
         this.initialSolver = new SolverFactory().createHeuristicSolver(heuristicName, problem);
         this.repairSolver = new WeightedRegretHeuristic(problem, 0.5, 0.5);
-        this.time = time;
-        setName(createName("LargeNeighborhoodSearchLocal", defaultStart));
+        this.withLocalSearch = withLocalSearch;
+        setName(createName("LargeNeighborhoodSearchLocal", defaultStart,withLocalSearch?"withLS":"withoutLS"));
     }
 
     @Override
     public Solution solve(int startingCityIndex) {
-        Solution x = initialSolver.solve(startingCityIndex);
-        x = localSearch(x);
+        Solution bestSolution = localSearch(initialSolver.solve(startingCityIndex));
+        double bestObjectiveValue = bestSolution.getObjectiveFunctionValue();
 
-        Solution bestSolution = x;
-        double bestObjectiveValue = x.getObjectiveFunctionValue();
-
-        // Time-based termination
-        long startTime = System.currentTimeMillis();
-        long endTime = startTime + time;
-
-        int iterations = 0;
+        iterations = 0;
 
         // Iterated Local Search process
-        while (System.currentTimeMillis() < endTime) {
+        // Time base termination
+        TimeMeasure timeMeasure = new TimeMeasure(getTime());
+        timeMeasure.start();
+        while (!timeMeasure.hasFinished()) {
             iterations++;
-            Solution y = destroy(bestSolution);
-            y = repair(y);
-            y = localSearch(y);
+            Solution currentSolution = destroy(bestSolution);
+            currentSolution = repair(currentSolution);
+            if(withLocalSearch){
+                currentSolution = localSearch(currentSolution);
+            }
 
             // Update the best solution if `y` is better
-            double currentObjectiveValue = y.getObjectiveFunctionValue();
+            double currentObjectiveValue = currentSolution.getObjectiveFunctionValue();
             if (currentObjectiveValue < bestObjectiveValue) {
-                bestSolution = y;
+                bestSolution = currentSolution;
                 bestObjectiveValue = currentObjectiveValue;
-                x = y; // Update `x` to the new best solution
             }
         }
-        System.out.println(iterations);
 
         return bestSolution;
     }
