@@ -46,11 +46,18 @@ public class LocalSearch extends Solver {
         throw new RuntimeException("not implemented");
     }
 
+    public Solution initialSolve(int startingCityIndex){
+        Solution solution = initialSolver.solve(startingCityIndex);
+        solution.calculateCityLocations();
+        solution.calculateInSolutions();
+        return solution;
+    }
+
     @Override
     public Solution solve(int startingCityIndex) {
-        Solution solution = initialSolver.solve(startingCityIndex);
-        moveset.clear();
-        moveset.setSolution(solution);
+        Solution solution = initialSolve(startingCityIndex);
+        getMoveset().clear();
+        getMoveset().setSolution(solution);
         solution.calculateCityLocations();
         solution.calculateInSolutions();
 
@@ -65,12 +72,12 @@ public class LocalSearch extends Solver {
             double bestCost = Double.POSITIVE_INFINITY;
             LocalMove bestMove = null;
 
-            for(LocalMove move: moveset){
+            for(LocalMove move: getMoveset()){
                 double moveCost = move.getMoveCost();
                 if(!move.isEvaluated()){
                     moveCost = calculateMoveCost(solution,move);
                     move.setMoveCost(moveCost);
-                    moveset.giveMoveEvaluation(move,moveCost);
+                    getMoveset().giveMoveEvaluation(move,moveCost);
                 }
 
                 if (moveCost >= 0 || move.getMoveState() == MoveState.NotApplicable){ //ignore non improving cost
@@ -94,7 +101,7 @@ public class LocalSearch extends Solver {
                 }
                 solution.performMove(bestMove);
                 // some movesets may use this info
-                moveset.setPerformedMove(bestMove);
+                getMoveset().setPerformedMove(bestMove);
 
                 if(validate){
                     double curobj = solution.getObjectiveFunctionValue();
@@ -209,5 +216,9 @@ public class LocalSearch extends Solver {
 
     public IntraMovesType getMovesType() {
         return movesType;
+    }
+
+    public Moveset getMoveset() {
+        return moveset;
     }
 }

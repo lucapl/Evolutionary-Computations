@@ -31,6 +31,9 @@ public class RandomSolver extends HeuristicSolver{
         }
         solution.setCityOrder(cityOrder);
 
+        solution.calculateCityLocations();
+        solution.calculateInSolutions();
+
         return solution;
     }
 

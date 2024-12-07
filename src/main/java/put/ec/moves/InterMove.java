@@ -12,6 +12,10 @@ public class InterMove extends DetailedMove {
         neighbours = new City[]{solution.getPrevious(cityInside),solution.getNext(cityInside)};
     }
 
+    public InterMove(InterMove move, Solution solution){
+        this(move.getCityInside(), move.getCityOutside(), solution);
+    }
+
     public City getNext(){
         return neighbours[1];
     }
@@ -34,6 +38,12 @@ public class InterMove extends DetailedMove {
 
     public City getCityOutside(){
         return getCity2();
+    }
+
+    public void invert(){
+        City temp = getCity1();
+        setCity1(getCity2());
+        setCity2(getCity1());
     }
 
     @Override

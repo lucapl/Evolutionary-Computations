@@ -67,13 +67,16 @@ public class SolverFactory {
                 yield new CandidateSearch(problem, solverData.initialHeuristic, solverData.movesType, numberOfCandidateMoves);
             }
             case "msls" -> {
-                yield new MultipleStartLocalSearch(problem, "random", new OptimizedMoveset(), 20);
+                yield new MultipleStartLocalSearch(problem, "random", new OptimizedMoveset(), 200);
             }
             case "ils" -> {
                 yield new IteratedLocalSearch(problem, "random", new OptimizedMoveset(), 10000, 5);
             }
             case "lns" -> {
-                yield new LargeNeighborhoodSearch(problem, "random", new OptimizedMoveset(), 1000);
+                yield new LargeNeighborhoodSearch(problem, "random", new OptimizedMoveset(), 1000,false);
+            }
+            case "lns_withLs" -> {
+                yield new LargeNeighborhoodSearch(problem, "random", new OptimizedMoveset(), 1000,true);
             }
             case "lmSearch" -> new LMSearch(problem);
             default -> createHeuristicSolver(name, problem);

@@ -18,7 +18,7 @@ public class OptimizedMoveset extends Moveset {
         if(validate){
             System.out.println("Validation is on for OptimizedMoveset, turn off for efficiency");
         }
-        improvingMoves = new PriorityQueue<>(new MoveComparator());
+        improvingMoves = new PriorityQueue<>();
         improvingMovesTracker = new HashSet<>();
     }
 
@@ -40,34 +40,35 @@ public class OptimizedMoveset extends Moveset {
 
     @Override
     public List<LocalMove> getMoves() {
-
-        List<LocalMove> improvingMovesCopy = new LinkedList<>(improvingMoves);
-        double prevObj = Double.POSITIVE_INFINITY;
-        for(LocalMove localMove: improvingMovesCopy){
-            MoveState moveState = determineMoveState(localMove);
-            localMove.setMoveState(moveState);
-            switch (moveState){
-                case Applicable:
-                    if(validate){
-                        prevObj = getSolution().getObjectiveFunctionValue();
-                    }
-                    getSolution().performMove(localMove);
-                    if(validate){
-                        double curobj = getSolution().getObjectiveFunctionValue();
-
-                        if (curobj-prevObj != localMove.getMoveCost()){
-                            System.err.println("Change in cost not equal to expected! \nDifference: "+((curobj-prevObj)-localMove.getMoveCost()) +"\n New cost: "+curobj);
-                        }
-                    }
-                    remove(localMove);
-                    break;
-                case NotApplicable:
-                    remove(localMove);
-                    break;
-            }
-        }
-
-        return getNewMoves();
+//
+//        List<LocalMove> improvingMovesCopy = new LinkedList<>(improvingMoves);
+//        double prevObj = Double.POSITIVE_INFINITY;
+//        for(LocalMove localMove: improvingMovesCopy){
+//            //MoveState moveState = determineMoveState(localMove);
+//            localMove.setMoveState(moveState);
+//            switch (moveState){
+//                case Applicable:
+//                    if(validate){
+//                        prevObj = getSolution().getObjectiveFunctionValue();
+//                    }
+//                    getSolution().performMove(localMove);
+//                    if(validate){
+//                        double curobj = getSolution().getObjectiveFunctionValue();
+//
+//                        if (curobj-prevObj != localMove.getMoveCost()){
+//                            System.err.println("Change in cost not equal to expected! \nDifference: "+((curobj-prevObj)-localMove.getMoveCost()) +"\n New cost: "+curobj);
+//                        }
+//                    }
+//                    remove(localMove);
+//                    break;
+//                case NotApplicable:
+//                    remove(localMove);
+//                    break;
+//            }
+//        }
+//
+//        return getNewMoves();
+        return null;
     }
 
     private List<LocalMove> getNewMoves(){
@@ -110,58 +111,7 @@ public class OptimizedMoveset extends Moveset {
         return improvingMovesTracker.contains(move);
     }
 
-    public MoveState determineMoveState(LocalMove move){
-        if(move instanceof InterMove interMove){
-            return determineInterMoveState(interMove);
-        }
-        return determineIntraMoveState((IntraMove) move);
-    }
 
-    private MoveState determineInterMoveState(InterMove move){
-        if(!getSolution().isIn(move.getCityInside()) || getSolution().isIn(move.getCityOutside())){
-            return MoveState.NotApplicable;
-        }
-
-        City cityInside = move.getCityInside();
-        if(getSolution().getNext(cityInside)==move.getNext() && getSolution().getPrevious(cityInside) == move.getPrevious()){
-            return MoveState.Applicable;
-        }
-
-        if(getSolution().getNext(cityInside)==move.getPrevious() && getSolution().getPrevious(cityInside) == move.getNext()){
-            return MoveState.Applicable;
-        }
-
-        return MoveState.NotApplicable;
-    }
-
-    private MoveState determineIntraMoveState(IntraMove move){
-        if(move instanceof EdgeSwapMove edgeSwapMove){
-            return determineEdgeSwapMoveState(edgeSwapMove);
-        }
-        throw new IllegalArgumentException("IntraMove handling not implemented further");
-    }
-
-    private  MoveState determineEdgeSwapMoveState(EdgeSwapMove move){
-        EdgeState edge1State = getSolution().isEdgeIn(move.getEdge1());
-        EdgeState edge2State = getSolution().isEdgeIn(move.getEdge2());
-
-        if(edge1State == EdgeState.NotFound || edge2State == EdgeState.NotFound){
-            return MoveState.NotApplicable;
-        }
-
-        if((edge1State == EdgeState.CorrectDirection && edge2State == EdgeState.CorrectDirection)){
-            // both correct direction or both inverted
-            return MoveState.Applicable;
-        }
-
-        if (edge1State == EdgeState.InvertedDirection && edge2State == EdgeState.InvertedDirection){
-            move.invertEdge1();
-            move.invertEdge2();
-            return MoveState.Applicable;
-        }
-
-        return MoveState.CurrentlyNotApplicable;
-    }
 
     @Override
     public void clear() {
@@ -171,9 +121,3 @@ public class OptimizedMoveset extends Moveset {
     }
 }
 
-class MoveComparator implements Comparator<LocalMove>{
-    @Override
-    public int compare(LocalMove o1, LocalMove o2) {
-        return Double.compare(o1.getMoveCost(),o2.getMoveCost());
-    }
-}

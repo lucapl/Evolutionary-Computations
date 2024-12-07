@@ -4,6 +4,12 @@ public class TimeMeasure {
     private double elapsedTime;
     private long start;
     private long stop;
+    private long maxTime;
+
+    public TimeMeasure(){}
+    public TimeMeasure(long maxTime){
+        this.maxTime = maxTime;
+    }
 
     public void start(){
         start = System.nanoTime();
@@ -21,5 +27,10 @@ public class TimeMeasure {
     public double getElapsedTime(int scale){
         elapsedTime = (double)(stop-start)* Math.pow(10,scale);
         return elapsedTime;
+    }
+
+    public boolean hasFinished(){
+        stop();
+        return getElapsedTime() >= maxTime;
     }
 }

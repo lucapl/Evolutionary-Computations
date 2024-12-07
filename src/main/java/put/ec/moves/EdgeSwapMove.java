@@ -6,8 +6,8 @@ import put.ec.solution.Solution;
 import java.util.Arrays;
 
 public class EdgeSwapMove extends IntraMove {
-    private final City[] edge1;
-    private final City[] edge2;
+    private City[] edge1;
+    private City[] edge2;
 
     public EdgeSwapMove(City city1, City city2, Solution solution){
         super(city1, city2, solution, IntraMovesType.Edges);
@@ -37,6 +37,14 @@ public class EdgeSwapMove extends IntraMove {
         edge2[0] = edge2[1];
         edge2[1] = getCity2();
         setCity2(edge2[0]);
+    }
+
+    public void invert(){
+        City[] temp = edge1;
+        edge1 = edge2;
+        edge2 = temp;
+        invertEdge2();
+        invertEdge1();
     }
 
     @Override
