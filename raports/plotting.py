@@ -1,5 +1,6 @@
 from plotnine import ggplot, aes, geom_point, scale_color_gradient, labs, theme_minimal, geom_path
 import pandas as pd
+import matplotlib.pyplot as plt
 
 
 def load_coordinates_from_csv(csv_path):
@@ -41,3 +42,12 @@ def plot_all(solver_types, instances, coordinates, best_solutions):
             best_solution = best_solutions[f'{solver}_{instance}']
             title = f"Best Solution from Instance {instance} ({solver.capitalize()})"
             plot_solution(best_solution, coordinates[instance], title).show()
+
+
+def plot_similarity_data(data, title):
+    x, y = data[:, 0], data[:, 1]
+    plt.scatter(x, y)
+    plt.xlabel("Objective function")
+    plt.ylabel("Similarity value")
+    plt.title(title)
+    plt.show()
