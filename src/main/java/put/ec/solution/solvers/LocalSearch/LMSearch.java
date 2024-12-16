@@ -63,6 +63,12 @@ public class LMSearch extends LocalSearch {
         return solve(solution);
     }
 
+    @Override
+    public Solution solve(){
+        Solution solution = initialSolve(0);
+        return solve(solution);
+    }
+
     /**
      * This method should be invoked after performing the move on the solution
      * @param move to be performed

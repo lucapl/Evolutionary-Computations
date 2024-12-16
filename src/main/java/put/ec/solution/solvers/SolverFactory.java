@@ -3,6 +3,7 @@ package put.ec.solution.solvers;
 import put.ec.moves.sets.Moveset;
 import put.ec.moves.sets.OptimizedMoveset;
 import put.ec.problem.TravellingSalesmanProblem;
+import put.ec.solution.solvers.Evolutionary.HybridEA;
 import put.ec.solution.solvers.Heuristics.*;
 import put.ec.solution.solvers.LocalSearch.*;
 import put.ec.moves.IntraMovesType;
@@ -79,6 +80,7 @@ public class SolverFactory {
                 yield new LargeNeighborhoodSearch(problem, "random", new OptimizedMoveset(), 1000,true);
             }
             case "lmSearch" -> new LMSearch(problem);
+            case "hybridEA" -> new HybridEA(problem,20,true,1000);
             default -> createHeuristicSolver(name, problem);
         };
     }
