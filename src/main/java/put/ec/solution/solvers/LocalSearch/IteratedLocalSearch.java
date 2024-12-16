@@ -8,11 +8,12 @@ import put.ec.problem.TravellingSalesmanProblem;
 import put.ec.solution.Solution;
 import put.ec.solution.solvers.Heuristics.HeuristicSolver;
 import put.ec.solution.solvers.SolverFactory;
+import put.ec.solution.solvers.TimedSolver;
 import put.ec.utils.TimeMeasure;
 
 import java.util.*;
 
-public class IteratedLocalSearch extends LMSearch {
+public class IteratedLocalSearch extends LMSearch implements TimedSolver {
     private static final String defaultStart = "random";
     private final int perturbationSize;
     private final Moveset moveset;
@@ -93,6 +94,7 @@ public class IteratedLocalSearch extends LMSearch {
         return time;
     }
 
+    @Override
     public void setTime(long time) {
         this.time = time;
     }

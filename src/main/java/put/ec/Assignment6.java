@@ -8,6 +8,7 @@ import put.ec.solution.solvers.LocalSearch.IteratedLocalSearch;
 import put.ec.solution.solvers.LocalSearch.MultipleStartLocalSearch;
 import put.ec.solution.solvers.Solver;
 import put.ec.solution.solvers.SolverFactory;
+import put.ec.solution.solvers.TimedSolver;
 import put.ec.utils.LoadingBar;
 import put.ec.utils.StatKeeper;
 import put.ec.utils.TimeMeasure;
@@ -35,9 +36,9 @@ public class Assignment6 extends Experiment{
             SolutionWriter solutionWriter = new SolutionWriter();
             for (TravellingSalesmanProblem problemInstance : instances) {
                 Solver solver = solverFactory.createSolver(solverName, problemInstance);
-                if(solver instanceof IteratedLocalSearch ils){
+                if(solver instanceof TimedSolver tms){
                     //ils.setTime((int)mslsTimes.get(problemInstance.getName()).getAverage());
-                    ils.setTime(2739058509L);
+                    tms.setTime(2739058509L);
                 }
                 solutionWriter.newInstance(problemInstance.getName());
 
